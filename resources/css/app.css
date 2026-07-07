@@ -1,0 +1,209 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    /* Premium Color Palette */
+    --color-brand-primary: #8b4513;
+    --color-brand-secondary: #d4a574;
+    --color-brand-dark: #1a1a1a;
+    --color-brand-light: #f8f7f5;
+    
+    /* Semantic Colors */
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-info: #3b82f6;
+}
+
+/* Premium CSS Variables & Custom Utilities */
+@layer base {
+    * {
+        @apply transition-colors duration-200;
+    }
+
+    body {
+        @apply bg-brand-light text-brand-dark;
+    }
+
+    /* Premium Typography */
+    h1 {
+        @apply text-4xl md:text-5xl font-bold tracking-tight;
+    }
+
+    h2 {
+        @apply text-3xl md:text-4xl font-bold tracking-tight;
+    }
+
+    h3 {
+        @apply text-2xl md:text-3xl font-semibold;
+    }
+
+    h4 {
+        @apply text-xl font-semibold;
+    }
+
+    h5 {
+        @apply text-lg font-semibold;
+    }
+
+    h6 {
+        @apply text-base font-semibold;
+    }
+
+    a {
+        @apply text-brand-primary hover:text-brand-secondary;
+    }
+}
+
+@layer components {
+    /* Premium Buttons */
+    .btn-primary {
+        @apply px-6 py-3 bg-brand-primary text-white rounded-lg font-medium 
+               hover:bg-brand-dark transition-all duration-300 shadow-md 
+               hover:shadow-lg active:scale-95;
+    }
+
+    .btn-secondary {
+        @apply px-6 py-3 bg-brand-secondary text-brand-dark rounded-lg font-medium 
+               hover:bg-brand-primary hover:text-white transition-all duration-300;
+    }
+
+    .btn-outline {
+        @apply px-6 py-3 border-2 border-brand-primary text-brand-primary rounded-lg 
+               font-medium hover:bg-brand-primary hover:text-white transition-all duration-300;
+    }
+
+    .btn-ghost {
+        @apply px-6 py-3 text-brand-primary font-medium hover:bg-brand-light 
+               rounded-lg transition-colors duration-300;
+    }
+
+    /* Premium Cards */
+    .card {
+        @apply bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow 
+               duration-300 border border-gray-100;
+    }
+
+    .card-elevated {
+        @apply bg-white rounded-xl shadow-lg border border-gray-100;
+    }
+
+    /* Premium Input */
+    .input-premium {
+        @apply w-full px-4 py-3 border border-gray-200 rounded-lg 
+               focus:outline-none focus:ring-2 focus:ring-brand-primary 
+               focus:border-transparent transition-all duration-300;
+    }
+
+    /* Badge */
+    .badge-primary {
+        @apply inline-block px-3 py-1 bg-brand-primary text-white text-sm 
+               font-medium rounded-full;
+    }
+
+    .badge-secondary {
+        @apply inline-block px-3 py-1 bg-brand-secondary text-brand-dark text-sm 
+               font-medium rounded-full;
+    }
+
+    /* Section Spacing */
+    .section-py {
+        @apply py-12 md:py-16 lg:py-20;
+    }
+
+    .section-px {
+        @apply px-4 md:px-6 lg:px-8;
+    }
+
+    /* Grid Container */
+    .container-grid {
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+    }
+
+    /* Product Card Premium */
+    .product-card {
+        @apply group bg-white rounded-lg overflow-hidden shadow-sm 
+               hover:shadow-xl transition-all duration-300 cursor-pointer;
+    }
+
+    .product-image-wrapper {
+        @apply relative overflow-hidden bg-gray-100 aspect-square;
+    }
+
+    .product-image-wrapper img {
+        @apply w-full h-full object-cover group-hover:scale-105 
+               transition-transform duration-300;
+    }
+
+    /* Premium Divider */
+    .divider {
+        @apply h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent;
+    }
+
+    /* Overlay Gradient */
+    .overlay-dark {
+        @apply absolute inset-0 bg-black/20;
+    }
+
+    .overlay-gradient {
+        @apply absolute inset-0 bg-gradient-to-t from-black/60 to-transparent;
+    }
+
+    /* Flex Center */
+    .flex-center {
+        @apply flex items-center justify-center;
+    }
+
+    /* Text Truncate */
+    .line-clamp-1 {
+        @apply line-clamp-1;
+    }
+
+    .line-clamp-2 {
+        @apply line-clamp-2;
+    }
+
+    .line-clamp-3 {
+        @apply line-clamp-3;
+    }
+}
+
+@layer utilities {
+    /* Animations */
+    .animate-fade-in {
+        @apply animate-in fade-in duration-500;
+    }
+
+    .animate-slide-up {
+        @apply animate-in slide-in-from-bottom duration-500;
+    }
+
+    /* Backdrop */
+    .backdrop-blur-sm {
+        @apply backdrop-blur-sm;
+    }
+
+    /* Position Fixed */
+    .fixed-top {
+        @apply fixed top-0 left-0 right-0 z-50;
+    }
+
+    /* Responsive Text */
+    .text-responsive {
+        @apply text-base md:text-lg lg:text-xl;
+    }
+
+    /* Premium Hover States */
+    .hover-lift {
+        @apply hover:-translate-y-1 transition-transform duration-300;
+    }
+
+    .hover-glow {
+        @apply hover:shadow-lg hover:shadow-brand-primary/20;
+    }
+}
