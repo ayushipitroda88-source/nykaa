@@ -237,8 +237,11 @@
 
             <a href="{{ route('product.show',$item->product->id) }}">
 
-                <img src="{{ asset('uploads/'.$item->product->image) }}"
-                     alt="{{ $item->product->title }}">
+                @if($item->variant && $item->variant->image)
+                    <img src="{{ asset('uploads/variants/'.$item->variant->image) }}" alt="{{ $item->product->title }}">
+                @else
+                    <img src="{{ asset('uploads/'.$item->product->image) }}" alt="{{ $item->product->title }}">
+                @endif
 
             </a>
 
@@ -246,13 +249,20 @@
 
                 <h4>{{ $item->product->title }}</h4>
 
+                @if($item->variant)
+                <p style="margin:0; font-size: 13px; color: #777; margin-bottom: 5px;">
+                   @if($item->variant->color) Color: {{ $item->variant->color->name }} @endif
+                   @if($item->variant->size) | Size: {{ $item->variant->size->name }} @endif
+                </p>
+                @endif
+
                 <p class="price">
-                    ₹{{ number_format($item->product->price,2) }}
+                    ₹{{ number_format($item->variant ? $item->variant->price : $item->product->price,2) }}
                 </p>
 
                 <div class="wishlist-buttons">
 
-                    <form action="{{ route('wishlist.cart',$item->product->id) }}"
+                    <form action="{{ route('wishlist.cart',$item->id) }}"
                           method="POST">
 
                         @csrf
@@ -265,7 +275,7 @@
 
                     </form>
 
-                    <form action="{{ route('wishlist.remove',$item->product->id) }}"
+                    <form action="{{ route('wishlist.remove',$item->id) }}"
                           method="POST">
 
                         @csrf

@@ -13,7 +13,7 @@ class WishlistController extends Controller
     // Wishlist Page
     public function index()
     {
-        $wishlists = Wishlist::with(['product', 'collection'])
+        $wishlists = Wishlist::with(['product', 'collection', 'variant.color', 'variant.size'])
                     ->where('user_id', Auth::id())
                     ->latest()
                     ->get();
@@ -26,9 +26,11 @@ class WishlistController extends Controller
     {
         $product = Product::findOrFail($id);
         $collectionId = request()->input('collection_id');
+        $variantId = request()->input('variant_id');
 
         $exists = Wishlist::where('user_id', Auth::id())
                     ->where('product_id', $product->id)
+                    ->where('variant_id', $variantId)
                     ->where('collection_id', $collectionId)
                     ->exists();
 
@@ -37,6 +39,7 @@ class WishlistController extends Controller
             Wishlist::create([
                 'user_id' => Auth::id(),
                 'product_id' => $product->id,
+                'variant_id' => $variantId,
                 'collection_id' => $collectionId,
             ]);
 
@@ -48,8 +51,9 @@ class WishlistController extends Controller
     // Remove Wishlist
     public function remove($id)
     {
+        // $id is now wishlist item id
         Wishlist::where('user_id',Auth::id())
-                ->where('product_id',$id)
+                ->where('id',$id)
                 ->delete();
 
         return back()->with('success','Product removed.');
@@ -59,16 +63,18 @@ class WishlistController extends Controller
     public function addToCart($id)
     {
         $wishlist = Wishlist::where('user_id', Auth::id())
-                        ->where('product_id', $id)
+                        ->where('id', $id)
                         ->firstOrFail();
 
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($wishlist->product_id);
         $collectionId = $wishlist->collection_id;
-        $price = $product->getDiscountedPrice($collectionId);
+        $variant = \App\Models\ProductVariant::find($wishlist->variant_id);
+        $price = $variant ? $variant->price : $product->getDiscountedPrice($collectionId);
 
         $cart = CartItem::firstOrNew([
             'user_id' => Auth::id(),
             'product_id' => $product->id,
+            'variant_id' => $wishlist->variant_id,
             'collection_id' => $collectionId,
         ]);
 

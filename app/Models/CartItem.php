@@ -12,6 +12,8 @@ class CartItem extends Model
 
     'product_id',
 
+    'variant_id',
+
     'collection_id',
 
     'price',
@@ -32,5 +34,9 @@ class CartItem extends Model
     public function collection()
 {
     return $this->belongsTo(Collection::class);
+}
+public function variant()
+{
+    return $this->belongsTo(ProductVariant::class,'variant_id');
 }
 }

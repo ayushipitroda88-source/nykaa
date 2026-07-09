@@ -465,48 +465,71 @@
                     <div class="cart-card">
                         <!-- Product Image -->
                         <div class="cart-img-wrapper">
-                            <img src="{{ asset('uploads/'.$item['image']) }}" alt="{{ $item['title'] }}" />
+                           
+    @if($item['variant_image'])
+    <img src="{{ asset('uploads/variants/'.$item['variant_image']) }}" alt="{{ $item['title'] }}">
+@else
+    <img src="{{ asset('uploads/'.$item['product_image']) }}" alt="{{ $item['title'] }}">
+@endif
+
                         </div>
 
                         <!-- Product Info -->
-                        <div class="cart-details">
-                            <h3>
-                                <a href="{{ route('product.show', $item['id']) }}">{{ $item['title'] }}</a>
-                            </h3>
-                            <p class="cart-sku">SKU: #{{ str_pad($item['id'], 6, '0', STR_PAD_LEFT) }}</p>
-                            <p class="cart-item-price">₹{{ number_format($item['price'], 2) }}</p>
-                        </div>
+                       <div class="cart-details">
 
-                        <!-- Quantity Controls & Remove Button -->
+    <h3>
+        <a href="{{ route('product.show', $item['id']) }}">
+            {{ $item['title'] }}
+        </a>
+    </h3>
+
+    <p class="cart-sku">
+        SKU: #{{ str_pad($item['id'],6,'0',STR_PAD_LEFT) }}
+    </p>
+
+    <p style="margin:6px 0;color:#666;">
+        <strong>Color:</strong> {{ $item['color'] ?? '-' }}
+    </p>
+
+    <p style="margin:6px 0;color:#666;">
+        <strong>Size:</strong> {{ $item['size'] ?? '-' }}
+    </p>
+
+    <p class="cart-item-price">
+        ₹{{ number_format($item['price'],2) }}
+    </p>
+
+</div>
+
+                    
                         <div class="cart-actions-wrapper">
-                            <div class="quantity-control">
-                                <form action="{{ route('cart.decrease', $item['id']) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    <button type="submit" class="qty-btn">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                                        </svg>
-                                    </button>
-                                </form>
-                                
-                                <span class="qty-val">{{ $item['quantity'] }}</span>
-                                
-                                <form action="{{ route('cart.increase', $item['id']) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    <button type="submit" class="qty-btn">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
+    <div class="quantity-control">
+        <form action="{{ route('cart.decrease', $item['variant_id'] ?? $item['id']) }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit" class="qty-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                </svg>
+            </button>
+        </form>
+        
+        <span class="qty-val">{{ $item['quantity'] }}</span>
+        
+        <form action="{{ route('cart.increase', $item['variant_id'] ?? $item['id']) }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit" class="qty-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+            </button>
+        </form>
+    </div>
 
-                            <form action="{{ route('cart.remove', $item['id']) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="remove-btn">Remove</button>
-                            </form>
-                        </div>
-
+    <form action="{{ route('cart.remove', $item['variant_id'] ?? $item['id']) }}" method="POST">
+        @csrf
+        <button type="submit" class="remove-btn">Remove</button>
+    </form>
+</div>
                         <!-- Subtotal Display per Row -->
                         <div class="cart-subtotal-display">
                             <div class="subtotal-label">Subtotal</div>

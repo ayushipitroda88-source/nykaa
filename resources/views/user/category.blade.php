@@ -68,6 +68,7 @@
 .category-products{
     flex:1;
     max-width:1200px;
+    
 }
 
 /* Tree */
@@ -505,10 +506,12 @@ class="{{ $category->id == $sub->id ? 'active-category' : '' }}">
 
 </p>
 
+<h3>Total Products: {{ $products->count() }}</h3>
+<br>
+
 <!-- PRODUCT GRID -->
 <div class="product-grid">
 
-<h3>Total Products: {{ $products->count() }}</h3>
 
 @forelse($products as $product)
 

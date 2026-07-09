@@ -6,73 +6,115 @@ use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ProductVariant;
 
 class CartController extends Controller
 {
-    public function index()
-    {
-        $cart = Auth::check()
-            ? CartItem::with('product')->where('user_id', Auth::id())->get()->map(function ($item) {
+   public function index()
+{
+    $cart = Auth::check()
+        ? CartItem::with([
+                'product',
+                'variant.color',
+                'variant.size'
+            ])
+            ->where('user_id', Auth::id())
+            ->get()
+            ->map(function ($item) {
                 return [
-                    'id' => $item->product->id,
-                    'title' => $item->product->title,
-                    'price' => $item->price, // 🔥 FIXED: Product price ki jagah CartItem ki saved price (discounted) uthayen
-                    'image' => $item->product->image,
-                    'quantity' => $item->quantity,
+                    'id'            => $item->product->id,
+                    'variant_id'    => $item->variant_id,
+                    'title'         => $item->product->title,
+                    'price'         => $item->price,
+                    'variant_image' => $item->variant?->image,
+                    'product_image' => $item->product->image,
+                    'color'         => $item->variant?->color?->name,
+                    'size'          => $item->variant?->size?->name,
+                    'quantity'      => $item->quantity,
                 ];
-            })->values()->all()
-            : session()->get('cart', []); // 🔥 OPTIMIZED: Guest users ke liye session cart fetch karein index par bhi
+            })
+            ->values()
+            ->all()
+        : array_values(session()->get('cart', [])); // 🔥 FIXED: यहाँ array_values() लगाया ताकि Blade में @foreach लूप सही से चले
 
-        return view('user.cart', compact('cart'));
-    }
-
+    return view('user.cart', compact('cart'));
+}
     public function add(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
-        $collectionId = $request->collection_id;
+{
+    $product = Product::findOrFail($id);
 
-        // Aapka custom model method jo discount calculate karta hai
-        $price = $product->getDiscountedPrice($collectionId);
+    $variant = ProductVariant::with(['product', 'color', 'size'])
+                ->findOrFail($request->variant_id);
 
-        if (Auth::check()) {
-            $item = CartItem::firstOrNew([
-                'user_id' => Auth::id(),
-                'product_id' => $product->id,
-                'collection_id' => $collectionId,
-            ]);
+    $collectionId = $request->collection_id;
 
-            $item->price = $price;
-            $item->quantity = ($item->exists ? $item->quantity : 0) + 1;
-            $item->save();
-        } else {
-            $cart = session()->get('cart', []);
+    $price = $variant->price;
 
-            if (isset($cart[$id])) {
-                $cart[$id]['quantity']++;
-                // Agar session me dubara add ho aur collection_id badle toh price update ho jaye
-                $cart[$id]['price'] = $price; 
-                $cart[$id]['collection_id'] = $collectionId;
-            } else {
-                $cart[$id] = [
-                    'id' => $product->id,
-                    'title' => $product->title,
-                    'price' => $price, // 🔥 FIXED: Original price ki jagah calculated $price use karein
-                    'collection_id' => $collectionId,
-                    'image' => $product->image,
-                    'quantity' => 1,
-                ];
-            }
+    if (Auth::check()) {
 
-            session()->put('cart', $cart);
+        $item = CartItem::firstOrNew([
+
+            'user_id' => Auth::id(),
+
+            'product_id' => $product->id,
+
+            'variant_id' => $variant->id,
+
+            'collection_id' => $collectionId,
+
+        ]);
+
+        $item->price = $price;
+
+        $item->quantity = ($item->exists ? $item->quantity : 0) + 1;
+
+        $item->save();
+
+    } else {
+
+        $cart = session()->get('cart', []);
+
+        $key = $variant->id;
+
+        if(isset($cart[$key])){
+
+            $cart[$key]['quantity']++;
+
+        }else{
+
+            $cart[$key] = [
+
+                'id' => $product->id,
+
+                'variant_id' => $variant->id,
+
+                'title' => $product->title,
+
+                'price' => $variant->price,
+
+                'image' => $variant->image,
+
+                'color' => optional($variant->color)->name,
+
+                'size' => optional($variant->size)->name,
+
+                'quantity' => 1,
+
+            ];
+
         }
 
-        return back();
+        session()->put('cart',$cart);
     }
 
+    return back()->with('success','Product Added To Cart');
+}
+   
     public function increase($id)
     {
+         
         if (Auth::check()) {
-            $item = CartItem::where('user_id', Auth::id())->where('product_id', $id)->first();
+            $item = CartItem::where('user_id', Auth::id())->where('variant_id', $id)->first();
 
             if ($item) {
                 $item->quantity++;
@@ -94,7 +136,7 @@ class CartController extends Controller
     public function decrease($id)
     {
         if (Auth::check()) {
-            $item = CartItem::where('user_id', Auth::id())->where('product_id', $id)->first();
+            $item = CartItem::where('user_id', Auth::id())->where('variant_id', $id)->first();
 
             if ($item) {
                 $item->quantity--;
@@ -125,7 +167,7 @@ class CartController extends Controller
     public function remove($id)
     {
         if (Auth::check()) {
-            CartItem::where('user_id', Auth::id())->where('product_id', $id)->delete();
+            CartItem::where('user_id', Auth::id())->where('variant_id', $id)->delete();
         } else {
             $cart = session()->get('cart', []);
             unset($cart[$id]);
