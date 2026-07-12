@@ -61,88 +61,71 @@
 
 /* LOGO */
 
-.logo{
-    font-size:34px;
-    font-weight:800;
-    color:#fc2779;
-    letter-spacing:2px;
-    cursor:pointer;
-    user-select:none;
+.logo {
+    font-size: 32px;
+    font-weight: 900;
+    color: #fc2779;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.02);
 }
 
 
 /* NAV LINKS */
 
-.nav-links{
-
-    list-style:none;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:28px;
-
-    margin:0;
-
-    padding:0;
-
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
 }
 
-.nav-links li{
-
-    position:relative;
-
+.nav-links li {
+    position: relative;
 }
 
-.nav-links li a{
-
-    text-decoration:none;
-
-    color:#222;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    transition:.35s;
-
-    padding:28px 0;
-
-    display:block;
-
+.nav-links li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+    padding: 28px 0;
+    display: block;
 }
 
-.nav-links li a:hover{
-
-    color:#fc2779;
-
+.nav-links li a:hover {
+    color: #fc2779;
 }
 
-.nav-links li::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:0;
-
-    bottom:18px;
-
-    width:0;
-
-    height:2px;
-
-    background:#fc2779;
-
-    transition:.35s;
-
+.nav-links li::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    width: 0;
+    height: 3px;
+    background: #fc2779;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
 }
 
-.nav-links li:hover::after{
-
-    width:100%;
-
+.nav-links li:hover::after {
+    width: 100%;
 }
 
 
@@ -329,9 +312,86 @@
 
 }
 
+/* ==========================
+      PROFILE DROPDOWN
+========================== */
 
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
 
+.profile-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 170px;
+    min-width: 170px;
+    margin-top: 25px; /* Spaced perfectly below header */
+    border-radius: 8px;
+    padding: 8px 0;
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    z-index: 1000;
+    list-style: none;
+}
 
+/* Invisible bridge so mouse doesn't fall off when moving to dropdown */
+.profile-dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 30px;
+}
+
+.profile-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.profile-dropdown .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 10px 18px;
+    font-size: 14.5px;
+    font-weight: 500;
+    text-align: left;
+    color: #444;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.profile-dropdown .dropdown-item:hover {
+    color: #fc2779;
+    background-color: #fff0f5; /* Subtle pink hover */
+}
+
+.profile-dropdown .dropdown-item i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.profile-dropdown .dropdown-divider {
+    height: 1px;
+    margin: 6px 0;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    border: none;
+}
+
+.header-right {
+    overflow: visible !important;
+}
+
+.navbar {
+    overflow: visible !important;
+}
 
 
 /* ==========================
@@ -410,39 +470,6 @@ display:none;
     margin-bottom:10px;
 }
 
-/* Profile Dropdown Fix */
-
-.profile-dropdown{
-    position: relative;
-}
-
-.profile-dropdown .dropdown-menu{
-    width: 170px;
-    min-width: 170px;
-    margin-top: 10px !important;
-    border-radius: 10px;
-    padding: 6px 0;
-    border: none;
-    box-shadow: 0 8px 20px rgba(0,0,0,.15);
-}
-
-.profile-dropdown .dropdown-item{
-    padding: 8px 15px;
-    font-size: 14px;
-}
-
-.profile-dropdown .dropdown-divider{
-    margin: 4px 0;
-}
-
-.header-right{
-    overflow: visible !important;
-}
-
-.navbar{
-    overflow: visible !important;
-}
-
 .header-icon span{
     max-width:120px;
     white-space: nowrap;
@@ -472,9 +499,9 @@ display:none;
 
     <!-- Logo -->
 
-    <div class="logo">
+    <a href="{{ url('/') }}" class="logo">
         NYKAA
-    </div>
+    </a>
 
     <!-- Categories -->
             <ul class="nav-links">
@@ -514,15 +541,15 @@ display:none;
 
         @auth
             <div class="dropdown profile-dropdown">
-                <a class="header-icon dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="header-icon dropdown-toggle" href="#" role="button" aria-expanded="false">
                     <i class="fa-regular fa-user"></i>
                     <span>{{ Auth::user()->name }}</span>
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bi bi-person-circle me-2"></i>My Profile
+                        <a class="dropdown-item" href="{{ route('home') }}">
+                            <i class="bi bi-person-circle"></i>My Account
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>
@@ -530,7 +557,7 @@ display:none;
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="dropdown-item text-danger">
-                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                <i class="bi bi-box-arrow-right"></i>Logout
                             </button>
                         </form>
                     </li>

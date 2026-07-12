@@ -161,7 +161,7 @@
 .product-buttons {
     display: flex;
     gap: 15px;
-    margin-top: 35px;
+    margin-top: 35px; 
 }
 .product-buttons form { flex: 1; }
 .product-buttons button {

@@ -42,7 +42,7 @@
 
 .category-wrapper{
     display:flex;
-    gap:30px;
+    gap:20px;
 }
 
 /* LEFT */
@@ -51,8 +51,8 @@
     width:240px;
     flex-shrink:0;
     background:#fff;
-    border-radius:0 15px 15px 0;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    border-radius:8px;
+    border:1px solid #e5e5e5;
     padding:20px;
 }
 
@@ -393,26 +393,17 @@ height:240px;
 
 <div class="category-page">
 
-<a href="javascript:history.back()" class="back-btn">
-
-<i class="bi bi-arrow-left"></i>
-
-Back
-
-</a>
-
-<div class="breadcrumb-box">
-
-Home /
-
-@if($category->parent)
-
-{{ $category->parent->name }} /
-
-@endif
-
-<strong>{{ $category->name }}</strong>
-
+<div style="margin-bottom: 25px;">
+    <a href="javascript:history.back()" class="back-btn" style="padding-left: 0; margin-bottom: 8px;">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+    <div class="breadcrumb-box" style="padding-left: 0; margin-bottom: 0;">
+        Home /
+        @if($category->parent)
+            {{ $category->parent->name }} /
+        @endif
+        <strong>{{ $category->name }}</strong>
+    </div>
 </div>
 
 <div class="category-wrapper">
@@ -494,20 +485,19 @@ class="{{ $category->id == $sub->id ? 'active-category' : '' }}">
 
 <div class="category-products">
 
-<h2 style="font-size:30px;font-weight:700;">
-
-{{ $category->name }}
-
-</h2>
-
-<p style="color:#888;margin-bottom:25px;">
-
-{{ $products->count() }} Products Found
-
-</p>
-
-<h3>Total Products: {{ $products->count() }}</h3>
-<br>
+<div class="category-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eaeaea;">
+    <h2 style="font-size:24px; font-weight:800; color: #fc2779; text-transform: uppercase; margin: 0;">
+        {{ $category->name }}
+    </h2>
+    <div style="display: flex; gap: 20px; align-items: center;">
+        <span style="color:#666; font-weight: 500; font-size: 14px;">
+            {{ $products->count() }} Products Found
+        </span>
+        <span style="font-size:15px; font-weight:600; color:#333;">
+            Total Products: {{ $products->count() }}
+        </span>
+    </div>
+</div>
 
 <!-- PRODUCT GRID -->
 <div class="product-grid">
