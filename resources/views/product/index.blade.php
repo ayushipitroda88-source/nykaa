@@ -38,7 +38,7 @@
                     @forelse($products as $product)
 
                         <tr>
-                            <td class="align-middle">{{ $product->id }}</td>
+                            <td class="align-middle">{{ $loop->iteration }}</td>
 
                             <td class="align-middle">
                                 <a href="{{ route('product.show', $product->id) }}">

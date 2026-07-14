@@ -22,7 +22,7 @@ class AuthController extends Controller
         'name' => $request->name,
         'email' => $request->email,
         'mobile' => $request->mobile,
-        'password' => Hash::make($request->password),
+        'password' => $request->password,
     ]);
 
     return back()->with('success', 'Account created successfully. Please login.');

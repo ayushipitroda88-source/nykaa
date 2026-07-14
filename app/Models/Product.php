@@ -15,11 +15,18 @@ class Product extends Model
         'brand_id',
         'price',
         'quantity',
+        'seller_id',
+        'status',
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function seller(): BelongsTo
+    {
+        return $this->belongsTo(Seller::class);
     }
 
     public function collections()

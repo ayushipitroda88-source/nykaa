@@ -243,14 +243,25 @@ public function search(Request $request)
                     ->get();
 
     $search = $request->search;
+    $brand_id = $request->brand_id;
 
     $products = Product::with('category')
-        ->where(function($query) use ($search) {
-            $query->where('title', 'LIKE', '%' . $search . '%')
+        ->when($search, function($query) use ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', '%' . $search . '%')
                   ->orWhere('description', 'LIKE', '%' . $search . '%');
+            });
+        })
+        ->when($brand_id, function($query) use ($brand_id) {
+            $query->where('brand_id', $brand_id);
         })
         ->get();
 
-    return view('user.search', compact('products', 'categories'));
+    $brand = null;
+    if ($brand_id) {
+        $brand = Brand::find($brand_id);
+    }
+
+    return view('user.search', compact('products', 'categories', 'brand', 'search'));
 }
 }

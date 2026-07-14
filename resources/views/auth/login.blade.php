@@ -21,6 +21,21 @@
         <form method="POST" action="{{ route('login.submit') }}">
             @csrf
 
+            @if ($errors->any())
+                <div style="color: red; margin-bottom: 10px; font-size: 14px;">
+                    <ul style="list-style: none; padding: 0;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if(session('success'))
+                <div style="color: green; margin-bottom: 10px; font-size: 14px;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
 

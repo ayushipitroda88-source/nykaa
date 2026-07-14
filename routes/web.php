@@ -29,9 +29,18 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 |--------------------------------------------------------------------------
 */
 
-Route::get('/admin', function () {
-    return view('layout.admin');
-})->name('admin.dashboard');
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+});
+
+Route::middleware('admin.auth')->group(function () {
+    Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -87,7 +96,7 @@ Route::prefix('categories')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     Route::resource('collections', CollectionController::class);
 
@@ -219,3 +228,56 @@ Route::put('/variants/{variant}',
 Route::delete('/variants/{variant}',
     [ProductVariantController::class,'destroy'])
     ->name('variants.delete');
+
+/*
+|--------------------------------------------------------------------------
+| Seller Routes
+|--------------------------------------------------------------------------
+*/
+use App\Http\Controllers\Seller\AuthController as SellerAuthController;
+
+Route::prefix('seller')->name('seller.')->group(function () {
+    Route::get('/login', [SellerAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [SellerAuthController::class, 'login'])->name('login.submit');
+    Route::get('/register', [SellerAuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [SellerAuthController::class, 'register'])->name('register.submit');
+    Route::post('/logout', [SellerAuthController::class, 'logout'])->name('logout');
+});
+
+use App\Http\Controllers\Seller\DashboardController as SellerDashboardController;
+use App\Http\Controllers\Seller\ProductController as SellerProductController;
+use App\Http\Controllers\Seller\ProductVariantController as SellerProductVariantController;
+use App\Http\Controllers\Seller\OrderController as SellerOrderController;
+use App\Http\Controllers\Admin\SellerManagementController;
+use App\Http\Controllers\Admin\ProductApprovalController;
+
+Route::prefix('seller')->name('seller.')->middleware(['seller.auth', 'seller.approved'])->group(function () {
+    Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('products', SellerProductController::class);
+    
+    Route::get('/products/{product}/variants', [SellerProductVariantController::class, 'index'])->name('variants.index');
+    Route::post('/products/{product}/variants', [SellerProductVariantController::class, 'store'])->name('variants.store');
+    Route::delete('/variants/{variant}', [SellerProductVariantController::class, 'destroy'])->name('variants.delete');
+
+    Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('orders.show');
+
+    // Seller Analytics
+    Route::get('/analytics/products', [\App\Http\Controllers\Seller\AnalyticsController::class, 'products'])->name('analytics.products');
+});
+
+Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function () {
+    // Seller Management
+    Route::get('/sellers', [SellerManagementController::class, 'index'])->name('sellers.index');
+    Route::get('/sellers/{id}', [SellerManagementController::class, 'show'])->name('sellers.show');
+    Route::patch('/sellers/{id}/status', [SellerManagementController::class, 'updateStatus'])->name('sellers.status');
+
+    // Product Approvals
+    Route::get('/products/approvals', [ProductApprovalController::class, 'index'])->name('products.approvals');
+    Route::patch('/products/approvals/{id}', [ProductApprovalController::class, 'updateStatus'])->name('products.status');
+
+    // Admin Analytics
+    Route::get('/analytics/products', [\App\Http\Controllers\Admin\AnalyticsController::class, 'products'])->name('analytics.products');
+    Route::get('/analytics/brands', [\App\Http\Controllers\Admin\AnalyticsController::class, 'brands'])->name('analytics.brands');
+    Route::get('/analytics/sellers', [\App\Http\Controllers\Admin\AnalyticsController::class, 'sellers'])->name('analytics.sellers');
+});

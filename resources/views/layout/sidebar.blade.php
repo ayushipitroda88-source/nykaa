@@ -91,6 +91,48 @@
 
   
             
+<li class="nav-item">
+    <a href="{{ route('admin.sellers.index') }}" class="nav-link">
+        <i class="nav-icon fas fa-users"></i>
+        <p>Manage Sellers</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ route('admin.products.approvals') }}" class="nav-link">
+        <i class="nav-icon fas fa-check-circle"></i>
+        <p>Product Approvals</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="#" class="nav-link">
+        <i class="nav-icon fas fa-chart-line"></i>
+        <p>
+            Analytics
+            <i class="nav-arrow bi bi-chevron-right"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ route('admin.analytics.products') }}" class="nav-link">
+                <i class="nav-icon far fa-circle"></i>
+                <p>Product Analytics</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('admin.analytics.brands') }}" class="nav-link">
+                <i class="nav-icon far fa-circle"></i>
+                <p>Brand Analytics</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('admin.analytics.sellers') }}" class="nav-link">
+                <i class="nav-icon far fa-circle"></i>
+                <p>Seller Analytics</p>
+            </a>
+        </li>
+    </ul>
+</li>
             <!--end::Sidebar Menu-->
           </nav>
         </div>

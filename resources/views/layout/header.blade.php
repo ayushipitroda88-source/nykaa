@@ -233,7 +233,7 @@
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
-                <span class="d-none d-md-inline">Alexander Pierce</span>
+                <span class="d-none d-md-inline">{{ Auth::guard('admin')->check() ? Auth::guard('admin')->user()->name : 'Super Admin' }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <!--begin::User Image-->
@@ -244,8 +244,8 @@
                     alt="User Image"
                   />
                   <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2023</small>
+                    {{ Auth::guard('admin')->check() ? Auth::guard('admin')->user()->name : 'Super Admin' }}
+                    <small>Administrator</small>
                   </p>
                 </li>
                 <!--end::User Image-->
@@ -253,23 +253,16 @@
                 <li class="user-body">
                   <!--begin::Row-->
                   <div class="row">
-                    <div class="col-4 text-center">
-                      <a href="#">Followers</a>
-                    </div>
-                    <div class="col-4 text-center">
-                      <a href="#">Sales</a>
-                    </div>
-                    <div class="col-4 text-center">
-                      <a href="#">Friends</a>
-                    </div>
                   </div>
                   <!--end::Row-->
                 </li>
                 <!--end::Menu Body-->
                 <!--begin::Menu Footer-->
-                <li class="user-footer">
-                  <a href="#" class="btn btn-outline-secondary">Profile</a>
-                  <a href="#" class="btn btn-outline-danger float-end">Sign out</a>
+                <li class="user-footer d-flex justify-content-end">
+                  <form action="{{ route('admin.logout') }}" method="POST">
+                      @csrf
+                      <button type="submit" class="btn btn-outline-danger">Sign out</button>
+                  </form>
                 </li>
                 <!--end::Menu Footer-->
               </ul>

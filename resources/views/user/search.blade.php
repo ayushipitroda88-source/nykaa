@@ -107,7 +107,15 @@
 
 <div class="container">
 
-<h2 class="section-title">Search Result</h2>
+<h2 class="section-title">
+    @if(isset($brand))
+        Products from {{ $brand->name }}
+    @elseif(isset($search) && $search != '')
+        Search Results for "{{ $search }}"
+    @else
+        All Products
+    @endif
+</h2>
 
 <div class="products-grid">
 

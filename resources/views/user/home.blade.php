@@ -1119,6 +1119,52 @@ section{
     transition: left 0.1s ease;
 }
 
+/*========================================
+ BRAND SECTION
+========================================*/
+
+.brand-section {
+    padding: 80px 8%;
+    background: #fafafa;
+}
+
+.brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 30px;
+    align-items: center;
+}
+
+.brand-card {
+    background: #fff;
+    border-radius: 15px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.brand-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    border-color: #fc2779;
+}
+
+.brand-card img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+}
+
+.brand-card:hover img {
+    transform: scale(1.05);
+}
+
 </style>
 @endpush
 
@@ -1341,9 +1387,9 @@ section{
     <div class="brand-grid">
 
     @foreach($brands as $brand)
-        <div class="brand-card">
+        <a href="{{ route('search', ['brand_id' => $brand->id]) }}" class="brand-card">
             <img src="{{ asset('uploads/brands/' . $brand->logo) }}" alt="{{ $brand->name }}">
-        </div>
+        </a>
     @endforeach
 
 </div>
