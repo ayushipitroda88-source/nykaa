@@ -24,9 +24,8 @@ class WishlistController extends Controller
     // Add To Wishlist
     public function add($id)
     {
-            
-
-        $product = Product::findOrFail($id);
+        // Only allow adding approved products to wishlist
+        $product = Product::where('status', 'approved')->findOrFail($id);
         $collectionId = request()->input('collection_id');
         $variantId = request()->input('variant_id');
 

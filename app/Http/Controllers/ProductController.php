@@ -48,7 +48,7 @@ class ProductController extends Controller
         $name = time() . '.' . $file->extension();
         $file->move(public_path('uploads'), $name);
 
-        // Create product
+        // Create product - Admin products auto-approved
         $product = Product::create([
             'title' => $request->title,
             'image' => $name,
@@ -57,6 +57,7 @@ class ProductController extends Controller
             'brand_id' => $request->brand_id,
             'price' => $request->price,
             'quantity' => $request->quantity,
+            'status' => 'approved', // Admin products are auto-approved
         ]);
 
         // Attach collections (BEST WAY)
@@ -220,7 +221,7 @@ public function getSubCategories($id)
         // Many-to-many sync (BEST WAY)
         $product->collections()->sync($request->collections ?? []);
         $product->colors()->sync($request->colors ?? []);
-        $product->sizes()->sync($request->sizes ?? []);
+        $product->sizes()->sync($request->sizes ?? []); 
 
         return redirect('/products')->with('success', 'Product updated successfully');
     }

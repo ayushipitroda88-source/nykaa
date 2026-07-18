@@ -93,7 +93,28 @@ class ProductController extends Controller
 
         $product->update($validated);
 
+        // If the product was rejected and seller is saving changes, 
+        // check if they want to resubmit (handled via separate resubmit button)
         return redirect()->route('seller.products.index')->with('success', 'Product updated successfully.');
+    }
+
+    /**
+     * Resubmit a rejected product for approval.
+     * Seller must save changes first before resubmitting.
+     */
+    public function resubmit($id)
+    {
+        $product = Product::where('seller_id', Auth::guard('seller')->id())
+            ->where('status', 'rejected')
+            ->findOrFail($id);
+
+        $product->status = 'resubmitted';
+        $product->rejection_reason = null;
+        $product->approved_by = null;
+        $product->approved_at = null;
+        $product->save();
+
+        return redirect()->route('seller.products.index')->with('success', 'Product has been resubmitted for approval.');
     }
 
     public function destroy($id)

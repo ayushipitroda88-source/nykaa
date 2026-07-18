@@ -259,6 +259,7 @@ Route::prefix('seller')->name('seller.')->middleware(['seller.auth', 'seller.app
     Route::put('/profile', [SellerProfileController::class, 'update'])->name('profile.update');
 
     Route::resource('products', SellerProductController::class);
+    Route::post('/products/{id}/resubmit', [SellerProductController::class, 'resubmit'])->name('products.resubmit');
     
     Route::get('/products/{product}/variants', [SellerProductVariantController::class, 'index'])->name('variants.index');
     Route::post('/products/{product}/variants', [SellerProductVariantController::class, 'store'])->name('variants.store');
@@ -279,9 +280,12 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::get('/sellers/{id}', [SellerManagementController::class, 'show'])->name('sellers.show');
     Route::patch('/sellers/{id}/status', [SellerManagementController::class, 'updateStatus'])->name('sellers.status');
 
-    // Product Approvals
+    // Product Approvals - Full Workflow
     Route::get('/products/approvals', [ProductApprovalController::class, 'index'])->name('products.approvals');
-    Route::patch('/products/approvals/{id}', [ProductApprovalController::class, 'updateStatus'])->name('products.status');
+    Route::get('/products/approvals/{id}/review', [ProductApprovalController::class, 'review'])->name('products.review');
+    Route::post('/products/approvals/{id}/approve', [ProductApprovalController::class, 'approve'])->name('products.approve');
+    Route::post('/products/approvals/{id}/reject', [ProductApprovalController::class, 'reject'])->name('products.reject');
+    Route::post('/products/approvals/{id}/resubmit', [ProductApprovalController::class, 'resubmit'])->name('products.resubmit');
 
     // Admin Analytics
     Route::get('/analytics/products', [\App\Http\Controllers\Admin\AnalyticsController::class, 'products'])->name('analytics.products');

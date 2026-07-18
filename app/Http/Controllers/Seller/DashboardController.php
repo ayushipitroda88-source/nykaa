@@ -17,6 +17,12 @@ class DashboardController extends Controller
 
         $totalProducts = Product::where('seller_id', $sellerId)->count();
         
+        // Product status counts for approval workflow
+        $pendingProducts = Product::where('seller_id', $sellerId)->where('status', 'pending')->count();
+        $approvedProducts = Product::where('seller_id', $sellerId)->where('status', 'approved')->count();
+        $rejectedProducts = Product::where('seller_id', $sellerId)->where('status', 'rejected')->count();
+        $resubmittedProducts = Product::where('seller_id', $sellerId)->where('status', 'resubmitted')->count();
+
         $pendingOrders = OrderItem::where('seller_id', $sellerId)
             ->whereHas('order', function ($query) {
                 $query->where('status', 'pending');
@@ -65,6 +71,10 @@ class DashboardController extends Controller
 
         return view('seller.dashboard', compact(
             'totalProducts',
+            'pendingProducts',
+            'approvedProducts',
+            'rejectedProducts',
+            'resubmittedProducts',
             'pendingOrders',
             'completedOrders',
             'todaysRevenue',

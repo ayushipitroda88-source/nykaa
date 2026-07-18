@@ -42,7 +42,8 @@ class CartController extends Controller
 }
     public function add(Request $request, $id)
 {
-    $product = Product::findOrFail($id);
+    // Only allow adding approved products to cart
+    $product = Product::where('status', 'approved')->findOrFail($id);
 
     $variant = ProductVariant::with(['product', 'color', 'size'])
                 ->findOrFail($request->variant_id);

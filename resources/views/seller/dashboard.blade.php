@@ -8,6 +8,46 @@
     </div>
 </div>
 
+{{-- Product Approval Status Widgets --}}
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="card border-0 shadow-sm h-100 border-start border-warning border-4">
+            <div class="card-body text-center">
+                <h6 class="text-uppercase fw-semibold text-warning mb-1">Pending Approval</h6>
+                <h2 class="fw-bold mb-0 text-warning">{{ $pendingProducts }}</h2>
+                <small class="text-muted">Awaiting review</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card border-0 shadow-sm h-100 border-start border-success border-4">
+            <div class="card-body text-center">
+                <h6 class="text-uppercase fw-semibold text-success mb-1">Approved</h6>
+                <h2 class="fw-bold mb-0 text-success">{{ $approvedProducts }}</h2>
+                <small class="text-muted">Live on marketplace</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card border-0 shadow-sm h-100 border-start border-danger border-4">
+            <div class="card-body text-center">
+                <h6 class="text-uppercase fw-semibold text-danger mb-1">Rejected</h6>
+                <h2 class="fw-bold mb-0 text-danger">{{ $rejectedProducts }}</h2>
+                <small class="text-muted">Needs changes</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card border-0 shadow-sm h-100 border-start border-info border-4">
+            <div class="card-body text-center">
+                <h6 class="text-uppercase fw-semibold text-info mb-1">Resubmitted</h6>
+                <h2 class="fw-bold mb-0 text-info">{{ $resubmittedProducts }}</h2>
+                <small class="text-muted">Re-reviewed</small>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4 mb-4">
     <!-- Total Products -->
     <div class="col-md-4 col-lg-3">

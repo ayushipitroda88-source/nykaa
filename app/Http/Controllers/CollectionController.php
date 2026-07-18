@@ -91,7 +91,9 @@ public function userIndex()
 
 public function userShow($id)
 {
-    $collection = Collection::with('products.category')
+    $collection = Collection::with(['products' => function ($query) {
+                    $query->where('status', 'approved');
+                }, 'products.category'])
                     ->findOrFail($id);
 
     return view('user.collection-products', compact('collection'));

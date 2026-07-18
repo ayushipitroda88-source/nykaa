@@ -16,7 +16,7 @@
         <div class="card-body table-responsive">
 
             <table class="table table-bordered table-striped">
-               <thead class="table-dark">
+                <thead class="table-dark">
 <tr>
     <th>ID</th>
     <th>Image</th>
@@ -29,6 +29,7 @@
     <th>Quantity</th>
     <th>Category</th>
     <th>Collection</th>
+    <th>Status</th>
     <th>Actions</th>
 </tr>
 </thead>
@@ -88,6 +89,23 @@
                                 @endforelse
                             </td>
 
+                            {{-- Status --}}
+                            <td class="align-middle">
+                                @php
+                                    $statusColors = [
+                                        'pending' => 'bg-warning text-dark',
+                                        'resubmitted' => 'bg-info text-dark',
+                                        'approved' => 'bg-success',
+                                        'rejected' => 'bg-danger',
+                                    ];
+                                    $sColor = $statusColors[$product->status] ?? 'bg-secondary';
+                                @endphp
+                                <span class="badge {{ $sColor }}">{{ ucfirst($product->status) }}</span>
+                                @if($product->seller_id)
+                                    <br><small class="text-muted">Seller: {{ $product->seller->business_name ?? 'N/A' }}</small>
+                                @endif
+                            </td>
+
                             <td class="align-middle" style="white-space: nowrap;">
                                 <a href="{{ url('/products/'.$product->id) }}" class="btn btn-info btn-sm text-white">
                                     View
@@ -113,7 +131,7 @@
                     @empty
 
                         <tr>
-                           <td colspan="12" class="text-center">
+                           <td colspan="13" class="text-center">
     No Products Found
 </td>
                         </tr>

@@ -17,6 +17,13 @@ class Product extends Model
         'quantity',
         'seller_id',
         'status',
+        'rejection_reason',
+        'approved_by',
+        'approved_at',
+    ];
+
+    protected $casts = [
+        'approved_at' => 'datetime',
     ];
 
     public function category(): BelongsTo
@@ -27,6 +34,11 @@ class Product extends Model
     public function seller(): BelongsTo
     {
         return $this->belongsTo(Seller::class);
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'approved_by');
     }
 
     public function collections()

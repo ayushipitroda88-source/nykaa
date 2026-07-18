@@ -202,18 +202,12 @@
 
                 @php
                     $collectionImage = $collection->image;
-                    $collectionSlug = $collection->slug ?? Str::slug($collection->name);
                     $imgSrc = null;
 
-                    if ($collectionImage && file_exists(public_path('uploads/collections/' . $collectionImage))) {
-                        $imgSrc = asset('uploads/collections/' . $collectionImage);
-                    } else {
-                        foreach (['jpg', 'jpeg', 'png', 'webp', 'gif'] as $ext) {
-                            $possiblePath = public_path("uploads/collections/{$collectionSlug}.{$ext}");
-                            if (file_exists($possiblePath)) {
-                                $imgSrc = asset("uploads/collections/{$collectionSlug}.{$ext}");
-                                break;
-                            }
+                    if ($collectionImage) {
+                        $imagePath = public_path('uploads/collections/' . $collectionImage);
+                        if (file_exists($imagePath)) {
+                            $imgSrc = asset('uploads/collections/' . rawurlencode($collectionImage));
                         }
                     }
 
