@@ -68,13 +68,6 @@
               </li>
         </li>
             
-          <li class="nav-item">
-    <a href="{{ route('brand') }}" class="nav-link">
-        <i class="nav-icon fas fa-tags"></i>
-        <p>Brand</p>
-    </a>
-</li>
-
 <li class="nav-item">
     <a href="{{ route('color.index') }}" class="nav-link">
         <i class="nav-icon fas fa-palette"></i>

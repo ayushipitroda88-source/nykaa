@@ -8,6 +8,7 @@ use App\Models\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wishlist;
 use App\Models\Brand;
+use App\Models\Seller;
 
 class HomeController extends Controller
 {
@@ -21,13 +22,16 @@ class HomeController extends Controller
   
 $brands = Brand::where('status',1)->get();
 
+// Approved Sellers (shown as "Brands" on user side)
+$sellers = Seller::where('status', 'approved')->get();
+
     // Products
    $products = Product::with([
     'category',
     'collections',
     'variants.color',
     'variants.size'
-])->get();
+])->where('status', 'approved')->get();
     // Collections
     $collections = Collection::where('status',1)
                     ->latest()
@@ -48,11 +52,13 @@ $brands = Brand::where('status',1)->get();
         'products',
         'collections',
           'brands',
+          'sellers',
         'wishlistItems'
     ));
 
     
 }
+
     public function show($slug)
 {
     $collection = Collection::where('slug',$slug)->firstOrFail();

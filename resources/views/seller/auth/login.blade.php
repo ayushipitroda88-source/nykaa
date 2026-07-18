@@ -13,7 +13,7 @@
                     <div class="mb-3">
                         <label>Email Address</label>
                         <input type="email" name="email" class="form-control" required value="{{ old('email') }}">
-                    </div>
+                    </div><br><br>
                     <div class="mb-3">
                         <label>Password</label>
                         <input type="password" name="password" class="form-control" required>

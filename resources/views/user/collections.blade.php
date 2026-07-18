@@ -71,8 +71,10 @@
 .collection-card img{
     width:100%;
     height:330px;
-    object-fit:cover;
+    object-fit:contain;
     transition:.5s;
+    background:#f8f9fa;
+    padding:10px;
 }
 
 .collection-card:hover img{

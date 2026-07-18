@@ -73,8 +73,10 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.5s ease;
+    background: #f8f9fa;
+    padding: 10px;
 }
 
 .product-card:hover img {

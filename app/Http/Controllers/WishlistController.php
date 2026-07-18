@@ -83,7 +83,9 @@ class WishlistController extends Controller
         $cart->price = $price;
         $cart->quantity = ($cart->exists ? $cart->quantity : 0) + 1;
         $cart->save();
-
+        $wishlist->delete();
         return back()->with('success', 'Product added to cart.');
+
+            
     }
 }

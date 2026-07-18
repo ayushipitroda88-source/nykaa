@@ -249,10 +249,15 @@ use App\Http\Controllers\Seller\ProductController as SellerProductController;
 use App\Http\Controllers\Seller\ProductVariantController as SellerProductVariantController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Admin\SellerManagementController;
+use App\Http\Controllers\Seller\ProfileController as SellerProfileController;
 use App\Http\Controllers\Admin\ProductApprovalController;
 
 Route::prefix('seller')->name('seller.')->middleware(['seller.auth', 'seller.approved'])->group(function () {
     Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('dashboard');
+    
+    Route::get('/profile', [SellerProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [SellerProfileController::class, 'update'])->name('profile.update');
+
     Route::resource('products', SellerProductController::class);
     
     Route::get('/products/{product}/variants', [SellerProductVariantController::class, 'index'])->name('variants.index');
@@ -264,6 +269,8 @@ Route::prefix('seller')->name('seller.')->middleware(['seller.auth', 'seller.app
 
     // Seller Analytics
     Route::get('/analytics/products', [\App\Http\Controllers\Seller\AnalyticsController::class, 'products'])->name('analytics.products');
+    Route::get('/analytics/products/export-pdf', [\App\Http\Controllers\Seller\AnalyticsController::class, 'exportPdf'])->name('analytics.products.export-pdf');
+    Route::get('/analytics/products/export-excel', [\App\Http\Controllers\Seller\AnalyticsController::class, 'exportExcel'])->name('analytics.products.export-excel');
 });
 
 Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function () {
@@ -278,6 +285,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
 
     // Admin Analytics
     Route::get('/analytics/products', [\App\Http\Controllers\Admin\AnalyticsController::class, 'products'])->name('analytics.products');
+    Route::get('/analytics/products/export-pdf', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportPdf'])->name('analytics.products.export-pdf');
+    Route::get('/analytics/products/export-excel', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportExcel'])->name('analytics.products.export-excel');
     Route::get('/analytics/brands', [\App\Http\Controllers\Admin\AnalyticsController::class, 'brands'])->name('analytics.brands');
+    Route::get('/analytics/brands/export-pdf', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportBrandsPdf'])->name('analytics.brands.export-pdf');
     Route::get('/analytics/sellers', [\App\Http\Controllers\Admin\AnalyticsController::class, 'sellers'])->name('analytics.sellers');
+    Route::get('/analytics/sellers/export-pdf', [\App\Http\Controllers\Admin\AnalyticsController::class, 'exportSellersPdf'])->name('analytics.sellers.export-pdf');
 });

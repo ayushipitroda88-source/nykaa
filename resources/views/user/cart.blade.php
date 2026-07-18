@@ -72,7 +72,9 @@
 .cart-img-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #f8f9fa;
+    padding: 4px;
 }
 
 /* Product Info */
@@ -478,13 +480,13 @@
                        <div class="cart-details">
 
     <h3>
-        <a href="{{ route('product.show', $item['id']) }}">
+        <a href="{{ route('product.show', $item['product_id']) }}">
             {{ $item['title'] }}
         </a>
     </h3>
 
     <p class="cart-sku">
-        SKU: #{{ str_pad($item['id'],6,'0',STR_PAD_LEFT) }}
+        SKU: #{{ str_pad($item['product_id'],6,'0',STR_PAD_LEFT) }}
     </p>
 
     <p style="margin:6px 0;color:#666;">
@@ -504,7 +506,7 @@
                     
                         <div class="cart-actions-wrapper">
     <div class="quantity-control">
-        <form action="{{ route('cart.decrease', $item['variant_id'] ?? $item['id']) }}" method="POST" style="display: inline;">
+        <form action="{{ route('cart.decrease', $item['id']) }}" method="POST" style="display: inline;">
             @csrf
             <button type="submit" class="qty-btn">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -515,7 +517,7 @@
         
         <span class="qty-val">{{ $item['quantity'] }}</span>
         
-        <form action="{{ route('cart.increase', $item['variant_id'] ?? $item['id']) }}" method="POST" style="display: inline;">
+        <form action="{{ route('cart.increase', $item['id']) }}" method="POST" style="display: inline;">
             @csrf
             <button type="submit" class="qty-btn">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -525,7 +527,7 @@
         </form>
     </div>
 
-    <form action="{{ route('cart.remove', $item['variant_id'] ?? $item['id']) }}" method="POST">
+    <form action="{{ route('cart.remove', $item['id']) }}" method="POST">
         @csrf
         <button type="submit" class="remove-btn">Remove</button>
     </form>

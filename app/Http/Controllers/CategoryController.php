@@ -68,7 +68,7 @@ class CategoryController extends Controller
         }
 
     }
-    $products = Product::whereIn('category_id', $categoryIds)->paginate(12);
+    $products = Product::whereIn('category_id', $categoryIds)->where('status', 'approved')->paginate(12);
 
     return view('user.category', compact(
         'category',

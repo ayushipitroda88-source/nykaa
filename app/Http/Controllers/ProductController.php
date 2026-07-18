@@ -83,7 +83,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::with(['category', 'collections', 'brand', 'colors', 'sizes'])->findOrFail($id);
+        $product = Product::with(['category', 'collections', 'brand', 'colors', 'sizes'])->where('status', 'approved')->findOrFail($id);
 
         $collectionId = request()->query('collection_id');
         $collection = null;
@@ -111,6 +111,7 @@ class ProductController extends Controller
 
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
+            ->where('status', 'approved')
             ->take(4)
             ->get();
 
@@ -244,8 +245,10 @@ public function search(Request $request)
 
     $search = $request->search;
     $brand_id = $request->brand_id;
+    $seller_id = $request->seller_id;
 
     $products = Product::with('category')
+        ->where('status', 'approved')
         ->when($search, function($query) use ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('title', 'LIKE', '%' . $search . '%')
@@ -255,6 +258,9 @@ public function search(Request $request)
         ->when($brand_id, function($query) use ($brand_id) {
             $query->where('brand_id', $brand_id);
         })
+        ->when($seller_id, function($query) use ($seller_id) {
+            $query->where('seller_id', $seller_id);
+        })
         ->get();
 
     $brand = null;
@@ -262,6 +268,12 @@ public function search(Request $request)
         $brand = Brand::find($brand_id);
     }
 
-    return view('user.search', compact('products', 'categories', 'brand', 'search'));
+    $seller = null;
+    if ($seller_id) {
+        $seller = \App\Models\Seller::find($seller_id);
+    }
+
+    return view('user.search', compact('products', 'categories', 'brand', 'seller', 'search'));
 }
+
 }

@@ -163,8 +163,10 @@
 .product-image img{
     width:100%;
     height:100%;
-    object-fit:cover;
+    object-fit:contain;
     transition:.4s;
+    background:#f8f8f8;
+    padding:10px;
 }
 
 .product-card:hover img{

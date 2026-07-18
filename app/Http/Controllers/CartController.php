@@ -22,7 +22,8 @@ class CartController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
-                    'id'            => $item->product->id,
+                    'id'            => $item->id, // Cart item primary key
+                    'product_id'    => $item->product->id,
                     'variant_id'    => $item->variant_id,
                     'title'         => $item->product->title,
                     'price'         => $item->price,
@@ -114,7 +115,7 @@ class CartController extends Controller
     {
          
         if (Auth::check()) {
-            $item = CartItem::where('user_id', Auth::id())->where('variant_id', $id)->first();
+            $item = CartItem::where('user_id', Auth::id())->where('id', $id)->first();
 
             if ($item) {
                 $item->quantity++;
@@ -136,7 +137,7 @@ class CartController extends Controller
     public function decrease($id)
     {
         if (Auth::check()) {
-            $item = CartItem::where('user_id', Auth::id())->where('variant_id', $id)->first();
+            $item = CartItem::where('user_id', Auth::id())->where('id', $id)->first();
 
             if ($item) {
                 $item->quantity--;
@@ -167,7 +168,7 @@ class CartController extends Controller
     public function remove($id)
     {
         if (Auth::check()) {
-            CartItem::where('user_id', Auth::id())->where('variant_id', $id)->delete();
+            CartItem::where('user_id', Auth::id())->where('id', $id)->delete();
         } else {
             $cart = session()->get('cart', []);
             unset($cart[$id]);

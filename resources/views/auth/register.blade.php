@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>Register</title>
-
     <link rel="stylesheet" href="{{ asset('css/register.css') }}">
 </head>
 <body>
+
+
+   
 
 <div class="register-container">
 
@@ -49,6 +51,7 @@
     </div>
 
 </div>
+
 
 </body>
 </html>
