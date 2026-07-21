@@ -63,7 +63,7 @@ class ProductApprovalController extends Controller
      */
     public function review($id)
     {
-        $product = Product::with(['seller', 'category', 'brand', 'approver', 'variants.color', 'variants.size'])
+        $product = Product::with(['seller', 'category', 'brand', 'approver', 'variants.color', 'variants.sizes'])
             ->whereNotNull('seller_id')
             ->findOrFail($id);
 

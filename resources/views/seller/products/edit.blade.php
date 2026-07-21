@@ -17,13 +17,7 @@
                         <input type="text" name="title" class="form-control" value="{{ old('title', $product->title) }}" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Product Image</label>
-                        <input type="file" name="image" class="form-control">
-                        @if($product->image)
-                            <img src="{{ asset('uploads/'.$product->image) }}" alt="Product Image" width="100" class="mt-2 rounded">
-                        @endif
-                    </div>
+                    <!-- Image removed for product level -->
 
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -52,25 +46,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Brand</label>
-                            <select name="brand_id" class="form-select">
-                                <option value="">Select Brand</option>
-                                @foreach($brands as $brand)
-                                    <option value="{{ $brand->id }}" {{ (old('brand_id', $product->brand_id) == $brand->id) ? 'selected' : '' }}>{{ $brand->name }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" value="{{ Auth::guard('seller')->user()->business_name }}" readonly>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Price (₹)</label>
-                            <input type="number" step="0.01" name="price" class="form-control" value="{{ old('price', $product->price) }}" required min="0">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Stock Quantity</label>
-                            <input type="number" name="quantity" class="form-control" value="{{ old('quantity', $product->quantity) }}" required min="0">
-                        </div>
-                    </div>
+                    <!-- Price and Quantity removed for product level -->
 
                     <div class="mb-3">
                         <label class="form-label">Product Description</label>

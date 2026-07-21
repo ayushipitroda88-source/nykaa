@@ -7,52 +7,44 @@ use App\Models\Color;
 
 class ColorController extends Controller
 {
+    /**
+     * Admin: View all seller colors.
+     * Admin cannot create or edit colors, only view and optionally delete.
+     */
     public function index()
     {
-        $colors = Color::latest()->get();
-        return view('color', compact('colors'));
+        $colors = Color::with('seller')->latest()->get();
+        return view('admin.colors.index', compact('colors'));
     }
 
+    /**
+     * Redirect: Admin cannot create colors.
+     * Route kept for backward compatibility.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'color_code' => 'required|string|max:20',
-            'status' => 'required|in:0,1',
-        ]);
-
-        Color::create([
-            'name' => $request->name,
-            'color_code' => $request->color_code,
-            'status' => $request->status,
-        ]);
-
-        return back()->with('success', 'Color Added Successfully');
+        return redirect()->route('color.index')
+            ->with('error', 'Admin cannot create colors. Sellers manage their own colors.');
     }
 
+    /**
+     * Redirect: Admin cannot edit colors.
+     * Route kept for backward compatibility.
+     */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'color_code' => 'required|string|max:20',
-            'status' => 'required|in:0,1',
-        ]);
-
-        $color = Color::findOrFail($id);
-        $color->update([
-            'name' => $request->name,
-            'color_code' => $request->color_code,
-            'status' => $request->status,
-        ]);
-
-        return back()->with('success', 'Color Updated Successfully');
+        return redirect()->route('color.index')
+            ->with('error', 'Admin cannot edit colors. Sellers manage their own colors.');
     }
 
+    /**
+     * Admin may optionally delete inappropriate records.
+     */
     public function destroy($id)
     {
         $color = Color::findOrFail($id);
         $color->delete();
 
-        return back()->with('success', 'Color Deleted Successfully');
+        return back()->with('success', 'Color deleted successfully.');
     }
 }

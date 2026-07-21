@@ -51,11 +51,9 @@
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Image</th>
                         <th>Title</th>
                         <th>Category</th>
                         <th>Brand</th>
-                        <th>Price</th>
                         <th>Status</th>
                         <th>Created</th>
                         <th>Actions</th>
@@ -64,18 +62,6 @@
                 <tbody>
                     @forelse($products as $product)
                     <tr>
-                        {{-- Product Image --}}
-                        <td>
-                            @if($product->image)
-                                <img src="{{ asset('uploads/' . $product->image) }}"
-                                     alt="{{ $product->title }}"
-                                     width="60" height="60"
-                                     style="object-fit: cover; border-radius: 8px;">
-                            @else
-                                <span class="text-muted">No Image</span>
-                            @endif
-                        </td>
-
                         {{-- Title --}}
                         <td>
                             <strong>{{ $product->title }}</strong>
@@ -93,9 +79,6 @@
 
                         {{-- Brand --}}
                         <td>{{ $product->brand->name ?? 'N/A' }}</td>
-
-                        {{-- Price --}}
-                        <td>₹{{ number_format($product->price, 2) }}</td>
 
                         {{-- Status Badge --}}
                         <td>
@@ -125,8 +108,8 @@
                                 {{-- Variant Edit --}}
                                 <a href="{{ route('seller.variants.index', $product->id) }}"
                                    class="btn btn-sm btn-outline-primary"
-                                   title="Edit Variants">
-                                    <i class="fas fa-layer-group me-1"></i>Variant Edit
+                                   title="Manage Variants">
+                                    <i class="fas fa-layer-group me-1"></i>Manage Variants
                                 </a>
 
                                 {{-- Delete --}}

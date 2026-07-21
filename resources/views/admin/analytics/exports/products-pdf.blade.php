@@ -258,19 +258,15 @@
     </div>
 
     <script type="text/php">
-        if (isset($pdf)) {
-            $fontMetrics = $pdf->getFontMetrics();
-            $font = $fontMetrics->getFont('DejaVu Sans');
-            $size = 8;
-            $canvas = $pdf->getCanvas();
-            $w = $canvas->get_width();
-            $h = $canvas->get_height();
-            $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
-            $textWidth = $fontMetrics->getTextWidth($text, $font, $size);
-            $x = ($w - $textWidth) / 2;
-            $y = $h - 12;
-            $canvas->page_text($x, $y, $text, $font, $size, array(102, 102, 102));
-        }
+        $font = $fontMetrics->getFont("DejaVu Sans", "normal");
+        $pdf->page_text(
+            $pdf->get_width() / 2 - 40,
+            $pdf->get_height() - 22,
+            "Page {PAGE_NUM} of {PAGE_COUNT}",
+            $font,
+            9,
+            array(80, 80, 80)
+        );
     </script>
 </body>
 </html>

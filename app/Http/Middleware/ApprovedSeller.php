@@ -16,16 +16,26 @@ class ApprovedSeller
     {
         $seller = Auth::guard('seller')->user();
 
-        if (!$seller || $seller->status !== 'approved') {
-            if ($seller && in_array($seller->status, ['rejected', 'suspended'])) {
-                Auth::guard('seller')->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                return redirect()->route('seller.login')->withErrors(['email' => 'Your account has been ' . $seller->status]);
-            }
-            return redirect()->route('seller.login')->with('success', 'Your account is pending admin approval.');
+        if (!$seller) {
+            return redirect()->route('seller.login');
         }
 
+        // Rejected sellers: redirect to verification status page
+        if ($seller->status === 'rejected') {
+            return redirect()->route('seller.verification.status');
+        }
+
+        // Suspended sellers: redirect to verification status page
+        if ($seller->status === 'suspended') {
+            return redirect()->route('seller.verification.status');
+        }
+
+        // Pending sellers: redirect to verification status page
+        if ($seller->status === 'pending') {
+            return redirect()->route('seller.verification.status');
+        }
+
+        // Only approved sellers can proceed
         return $next($request);
     }
 }

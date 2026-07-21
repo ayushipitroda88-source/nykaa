@@ -73,6 +73,15 @@
                     </tr>
                 @endforelse
             </tbody>
+            @if($products->count() > 0)
+            <tfoot>
+                <tr class="table-secondary fw-bold">
+                    <td colspan="2">Total (This Page)</td>
+                    <td class="text-center"><span class="badge bg-primary fs-6">{{ $products->sum('cart_users_count') }}</span></td>
+                    <td class="text-center"><span class="badge bg-info text-dark fs-6">{{ $products->sum('wishlist_users_count') }}</span></td>
+                </tr>
+            </tfoot>
+            @endif
         </table>
         
         <div class="mt-3">

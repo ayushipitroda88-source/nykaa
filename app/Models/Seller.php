@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Seller extends Authenticatable
 {
@@ -23,6 +24,10 @@ class Seller extends Authenticatable
         'ifsc_code',
         'business_logo',
         'status',
+        'rejection_reason',
+        'suspension_reason',
+        'rejected_at',
+        'suspended_at',
     ];
 
     protected $hidden = [
@@ -33,11 +38,23 @@ class Seller extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'rejected_at' => 'datetime',
+            'suspended_at' => 'datetime',
         ];
     }
 
-    public function products()
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function colors(): HasMany
+    {
+        return $this->hasMany(Color::class);
+    }
+
+    public function sizes(): HasMany
+    {
+        return $this->hasMany(Size::class);
     }
 }

@@ -60,7 +60,7 @@ class ProductController extends Controller
             'status' => 'approved', // Admin products are auto-approved
         ]);
 
-        // Attach collections (BEST WAY)
+        // Attach collections
         if ($request->filled('collections')) {
             $product->collections()->sync($request->collections);
         }
@@ -76,7 +76,8 @@ class ProductController extends Controller
         }
 
         return redirect('/products')->with('success', 'Product created successfully');
-    }    public function index()
+    }    
+    public function index()
     {
         $products = Product::with(['category', 'brand', 'collections', 'colors', 'sizes'])->get();
         return view('product.index', compact('products'));
@@ -116,22 +117,16 @@ class ProductController extends Controller
             ->take(4)
             ->get();
 
-        // Header ke liye categories
-        $categories = Category::with('children')
-            ->whereNull('parent_id')
-            ->orderBy('position')
-            ->get();
-
         return view('user.product-details', compact(
             'product',
             'relatedProducts',
-            'categories',
             'collectionId',
             'collection',
             'hasDiscount',
             'discountedPrice'
         ));
     }
+    
     public function edit($id)
     {
         $product = Product::with(['colors', 'sizes'])->findOrFail($id);
@@ -171,14 +166,15 @@ class ProductController extends Controller
             'childCategory'
         ));
     }
-public function getSubCategories($id)
-{
-    $categories = Category::where('parent_id', $id)
-        ->orderBy('position')
-        ->get();
+    
+    public function getSubCategories($id)
+    {
+        $categories = Category::where('parent_id', $id)
+            ->orderBy('position')
+            ->get();
 
-    return response()->json($categories);
-}
+        return response()->json($categories);
+    }
 
     public function update(Request $request, $id)
     {
@@ -218,63 +214,152 @@ public function getSubCategories($id)
 
         $product->save();
 
-        // Many-to-many sync (BEST WAY)
+        // Many-to-many sync
         $product->collections()->sync($request->collections ?? []);
         $product->colors()->sync($request->colors ?? []);
         $product->sizes()->sync($request->sizes ?? []); 
 
         return redirect('/products')->with('success', 'Product updated successfully');
     }
-public function destroy($id)
-{
-    $product = Product::findOrFail($id);
+    
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
 
-    if (file_exists(public_path('uploads/'.$product->image))) {
-        unlink(public_path('uploads/'.$product->image));
+        if (file_exists(public_path('uploads/'.$product->image))) {
+            unlink(public_path('uploads/'.$product->image));
+        }
+
+        $product->delete();
+
+        return redirect('/products');
     }
 
-    $product->delete();
+    public function search(Request $request)
+    {
+        $search = $request->search;
+        $sort = $request->sort ?? 'newest';
+        $brand_id = $request->brand;
+        $seller_id = $request->seller_id;
+        $minPrice = $request->min_price;
+        $maxPrice = $request->max_price;
+        $inStock = $request->in_stock;
+        $colorId = $request->color;
+        $sizeId = $request->size;
+        $discount = $request->discount;
+        $collectionId = $request->collection;
+        $categoryId = $request->category;
 
-    return redirect('/products');
-}
-
-public function search(Request $request)
-{
-    $categories = Category::whereNull('parent_id')
-                    ->with('children')
-                    ->get();
-
-    $search = $request->search;
-    $brand_id = $request->brand_id;
-    $seller_id = $request->seller_id;
-
-    $products = Product::with('category')
-        ->where('status', 'approved')
-        ->when($search, function($query) use ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'LIKE', '%' . $search . '%')
-                  ->orWhere('description', 'LIKE', '%' . $search . '%');
+        $products = Product::with(['category', 'brand', 'colors', 'sizes', 'collections', 'variants.color'])
+            ->where('status', 'approved')
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'LIKE', '%' . $search . '%')
+                      ->orWhere('description', 'LIKE', '%' . $search . '%');
+                });
+            })
+            ->when($brand_id, function($query) use ($brand_id) {
+                $query->where('brand_id', $brand_id);
+            })
+            ->when($seller_id, function($query) use ($seller_id) {
+                $query->where('seller_id', $seller_id);
+            })
+            ->when($minPrice, function($query) use ($minPrice) {
+                $query->where('price', '>=', $minPrice);
+            })
+            ->when($maxPrice, function($query) use ($maxPrice) {
+                $query->where('price', '<=', $maxPrice);
+            })
+            ->when($inStock, function($query) {
+                $query->where('quantity', '>', 0);
+            })
+            ->when($colorId, function($query) use ($colorId) {
+                $query->whereHas('colors', function($q) use ($colorId) {
+                    $q->where('colors.id', $colorId);
+                });
+            })
+            ->when($sizeId, function($query) use ($sizeId) {
+                $query->whereHas('sizes', function($q) use ($sizeId) {
+                    $q->where('sizes.id', $sizeId);
+                });
+            })
+            ->when($discount, function($query) use ($discount) {
+                $query->whereHas('collections', function($q) use ($discount) {
+                    $q->where('discount', '>=', $discount)
+                      ->where('status', 1)
+                      ->where('discount_start', '<=', now())
+                      ->where('discount_end', '>=', now());
+                });
+            })
+            ->when($collectionId, function($query) use ($collectionId) {
+                $query->whereHas('collections', function($q) use ($collectionId) {
+                    $q->where('collections.id', $collectionId);
+                });
+            })
+            ->when($categoryId, function($query) use ($categoryId) {
+                $catIds = collect([$categoryId]);
+                $cat = Category::with('children.children')->find($categoryId);
+                if ($cat) {
+                    foreach ($cat->children as $child) {
+                        $catIds->push($child->id);
+                        foreach ($child->children as $sub) {
+                            $catIds->push($sub->id);
+                        }
+                    }
+                }
+                $query->whereIn('category_id', $catIds);
             });
-        })
-        ->when($brand_id, function($query) use ($brand_id) {
-            $query->where('brand_id', $brand_id);
-        })
-        ->when($seller_id, function($query) use ($seller_id) {
-            $query->where('seller_id', $seller_id);
-        })
-        ->get();
 
-    $brand = null;
-    if ($brand_id) {
-        $brand = Brand::find($brand_id);
+        // Sort
+        switch ($sort) {
+            case 'price_asc': $products->orderBy('price', 'asc'); break;
+            case 'price_desc': $products->orderBy('price', 'desc'); break;
+            case 'name_asc': $products->orderBy('title', 'asc'); break;
+            case 'name_desc': $products->orderBy('title', 'desc'); break;
+            default: $products->latest(); break;
+        }
+
+        $products = $products->paginate(12)->withQueryString();
+
+        // Filter data for sidebar
+        $filterCollections = Collection::where('status', 1)
+            ->whereHas('products', function($q) {
+                $q->where('status', 'approved');
+            })->get();
+
+        $filterBrands = Brand::whereHas('products', function($q) {
+                $q->where('status', 'approved');
+            })->withCount(['products' => function($q) {
+                $q->where('status', 'approved');
+            }])->get();
+
+        $filterColors = Color::whereHas('products', function($q) {
+                $q->where('status', 'approved');
+            })->get();
+
+        $filterSizes = Size::whereHas('products', function($q) {
+                $q->where('status', 'approved');
+            })->get();
+
+        $brand = null;
+        if ($brand_id) {
+            $brand = Brand::find($brand_id);
+        }
+
+        $seller = null;
+        if ($seller_id) {
+            $seller = \App\Models\Seller::find($seller_id);
+        }
+
+        return view('user.search', compact(
+            'products',
+            'brand',
+            'seller',
+            'search',
+            'filterBrands',
+            'filterColors',
+            'filterSizes',
+            'filterCollections'
+        ));
     }
-
-    $seller = null;
-    if ($seller_id) {
-        $seller = \App\Models\Seller::find($seller_id);
-    }
-
-    return view('user.search', compact('products', 'categories', 'brand', 'seller', 'search'));
-}
-
 }

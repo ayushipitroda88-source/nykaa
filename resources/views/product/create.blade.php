@@ -118,7 +118,7 @@
         <option value="">Select Brand</option>
         @foreach($brands as $brand)
             <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
-                {{ $business_name }}
+                {{ $brand->name }}
             </option>
         @endforeach
     </select>
@@ -127,7 +127,7 @@
 <div class="mb-3">
     <label>Main Category</label>
 
-    <select id="main_category" class="form-control">
+    <select id="main_category" class="form-control"
         <option value="">Select Main Category</option>
 
         @foreach($mainCategories as $category)

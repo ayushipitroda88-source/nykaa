@@ -230,7 +230,21 @@
             </div>
         </div>
 
-        <div class="product-right" id="productContainer" data-variants='@json($product->variants)'>
+        @php
+            $variantData = $product->variants->flatMap(function($v) {
+                return $v->sizes->map(function($s) use ($v) {
+                    return [
+                        "id" => $s->id,
+                        "color_id" => $v->color_id,
+                        "size_id" => $s->size_id,
+                        "price" => $s->price,
+                        "quantity" => $s->quantity,
+                        "image" => $v->image
+                    ];
+                });
+            })->values();
+        @endphp
+        <div class="product-right" id="productContainer" data-variants="{{ json_encode($variantData) }}">
             
             @if($product->category)
                 <div class="product-category">{{ $product->category->name }}</div>
@@ -242,16 +256,16 @@
             <h1 class="product-title">{{ $product->title }}</h1>
 
             <div class="product-price" id="productPrice">
-                @if($product->variants && $product->variants->count())
-                    &#8377;{{ number_format($product->variants->first()->price, 2) }}
+                @if($product->variants && $product->variants->count() && $product->variants->first()->sizes->count())
+                    &#8377;{{ number_format($product->variants->first()->sizes->first()->price, 2) }}
                 @else
                     &#8377;{{ number_format($product->price, 2) }}
                 @endif
             </div>
 
             <div class="product-stock" id="stockStatusWrapper">
-                @if($product->variants && $product->variants->count())
-                    @if($product->variants->first()->quantity > 0)
+                @if($product->variants && $product->variants->count() && $product->variants->first()->sizes->count())
+                    @if($product->variants->first()->sizes->first()->quantity > 0)
                         <span class="in-stock">In Stock</span>
                     @else
                         <span class="out-stock">Out Of Stock</span>
@@ -269,7 +283,7 @@
                 @if($product->variants && $product->variants->count())
                     <div class="selection-title">Select Color</div>
                     <div class="color-swatches">
-                        @foreach($product->variants->unique('color_id') as $index => $variant)
+                        @foreach($product->variants->sortBy('priority') as $index => $variant)
                             @if($variant->color)
                                 <div class="color-swatch {{ $index == 0 ? 'active' : '' }}"
                                      style="background-color:{{ $variant->color->color_code }}"
@@ -281,11 +295,20 @@
 
                     <div class="selection-title">Select Size</div>
                     <div class="size-options">
-                        @foreach($product->variants->unique('size_id') as $index => $variant)
-                            @if($variant->size)
+                        @php
+                            $allSizes = collect();
+                            foreach($product->variants as $variant) {
+                                foreach($variant->sizes as $vs) {
+                                    $allSizes->push($vs->size);
+                                }
+                            }
+                            $uniqueSizes = $allSizes->unique('id');
+                        @endphp
+                        @foreach($uniqueSizes as $index => $size)
+                            @if($size)
                                 <div class="size-option {{ $index == 0 ? 'active' : '' }}"
-                                     data-id="{{ $variant->size_id }}"> 
-                                    {{ $variant->size->name }}
+                                     data-id="{{ $size->id }}"> 
+                                    {{ $size->name }}
                                 </div>
                             @endif
                         @endforeach
@@ -311,7 +334,6 @@
                 </form>
                 @php 
                     $fallbackId = $product->id;
-                   // $fallbackId = ($product->variants && $product->variants->count()) ? $product->variants->first()->id : $product->id; 
                 @endphp
                 <form action="{{ route('cart.add', ['id' => $fallbackId]) }}" method="POST" id="cartForm">
     @csrf

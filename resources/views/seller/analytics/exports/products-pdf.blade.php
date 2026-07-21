@@ -258,9 +258,19 @@
     <!-- Footer with Page Number -->
     <div class="footer">
         <span>{{ $seller->business_name }} &mdash; Product Analytics Report &mdash; Generated on {{ date('d F Y, h:i A') }}</span>
-        <br>
-        <span>Page {PAGE_NUM} of {PAGE_COUNT}</span>
     </div>
+
+    <script type="text/php">
+        $font = $fontMetrics->getFont("DejaVu Sans", "normal");
+        $pdf->page_text(
+            $pdf->get_width() / 2 - 40,
+            $pdf->get_height() - 22,
+            "Page {PAGE_NUM} of {PAGE_COUNT}",
+            $font,
+            9,
+            array(80, 80, 80)
+        );
+    </script>
 
 </body>
 </html>

@@ -7,48 +7,44 @@ use App\Models\Size;
 
 class SizeController extends Controller
 {
+    /**
+     * Admin: View all seller sizes.
+     * Admin cannot create or edit sizes, only view and optionally delete.
+     */
     public function index()
     {
-        $sizes = Size::latest()->get();
-        return view('size', compact('sizes'));
+        $sizes = Size::with('seller')->latest()->get();
+        return view('admin.sizes.index', compact('sizes'));
     }
 
+    /**
+     * Redirect: Admin cannot create sizes.
+     * Route kept for backward compatibility.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'status' => 'required|in:0,1',
-        ]);
-
-        Size::create([
-            'name' => $request->name,
-            'status' => $request->status,
-        ]);
-
-        return back()->with('success', 'Size Added Successfully');
+        return redirect()->route('size.index')
+            ->with('error', 'Admin cannot create sizes. Sellers manage their own sizes.');
     }
 
+    /**
+     * Redirect: Admin cannot edit sizes.
+     * Route kept for backward compatibility.
+     */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'status' => 'required|in:0,1',
-        ]);
-
-        $size = Size::findOrFail($id);
-        $size->update([
-            'name' => $request->name,
-            'status' => $request->status,
-        ]);
-
-        return back()->with('success', 'Size Updated Successfully');
+        return redirect()->route('size.index')
+            ->with('error', 'Admin cannot edit sizes. Sellers manage their own sizes.');
     }
 
+    /**
+     * Admin may optionally delete inappropriate records.
+     */
     public function destroy($id)
     {
         $size = Size::findOrFail($id);
         $size->delete();
 
-        return back()->with('success', 'Size Deleted Successfully');
+        return back()->with('success', 'Size deleted successfully.');
     }
 }

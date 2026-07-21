@@ -24,6 +24,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     @if(Auth::guard('seller')->check())
+                        @php $isApproved = Auth::guard('seller')->user()->status === 'approved'; @endphp
+                        @if($isApproved)
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('seller.dashboard') }}">Dashboard</a>
                         </li>
@@ -31,18 +33,31 @@
                             <a class="nav-link" href="{{ route('seller.products.index') }}">Products</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('seller.colors.index') }}">Colors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('seller.sizes.index') }}">Sizes</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('seller.orders.index') }}">Orders</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('seller.analytics.products') }}">Analytics</a>
                         </li>
+                        @endif
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                My Account
+                                {{ Auth::guard('seller')->user()->business_name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                @if($isApproved)
                                 <li><a class="dropdown-item" href="{{ route('seller.profile.edit') }}">Edit Profile</a></li>
                                 <li><hr class="dropdown-divider"></li>
+                                @endif
+                                @if(!$isApproved)
+                                <li><a class="dropdown-item" href="{{ route('seller.verification.status') }}">Verification Status</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                @endif
                                 <li>
                                     <form action="{{ route('seller.logout') }}" method="POST" class="m-0">
                                         @csrf

@@ -6,7 +6,7 @@ use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ProductVariant;
+use App\Models\VariantSize;
 
 class CartController extends Controller
 {
@@ -15,7 +15,7 @@ class CartController extends Controller
     $cart = Auth::check()
         ? CartItem::with([
                 'product',
-                'variant.color',
+                'variant.variant.color',
                 'variant.size'
             ])
             ->where('user_id', Auth::id())
@@ -27,16 +27,16 @@ class CartController extends Controller
                     'variant_id'    => $item->variant_id,
                     'title'         => $item->product->title,
                     'price'         => $item->price,
-                    'variant_image' => $item->variant?->image,
+                    'variant_image' => $item->variant?->variant?->image,
                     'product_image' => $item->product->image,
-                    'color'         => $item->variant?->color?->name,
+                    'color'         => $item->variant?->variant?->color?->name,
                     'size'          => $item->variant?->size?->name,
                     'quantity'      => $item->quantity,
                 ];
             })
             ->values()
             ->all()
-        : array_values(session()->get('cart', [])); // 🔥 FIXED: यहाँ array_values() लगाया ताकि Blade में @foreach लूप सही से चले
+        : array_values(session()->get('cart', []));
 
     return view('user.cart', compact('cart'));
 }
@@ -45,7 +45,7 @@ class CartController extends Controller
     // Only allow adding approved products to cart
     $product = Product::where('status', 'approved')->findOrFail($id);
 
-    $variant = ProductVariant::with(['product', 'color', 'size'])
+    $variant = VariantSize::with(['variant.product', 'variant.color', 'size'])
                 ->findOrFail($request->variant_id);
 
     $collectionId = $request->collection_id;
@@ -94,12 +94,9 @@ class CartController extends Controller
 
                 'price' => $variant->price,
 
-                'image' => $variant->image,
-
-                'color' => optional($variant->color)->name,
-
+                'image' => optional($variant->variant)->image,
+                'color' => optional(optional($variant->variant)->color)->name,
                 'size' => optional($variant->size)->name,
-
                 'quantity' => 1,
 
             ];

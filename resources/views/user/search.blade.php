@@ -630,7 +630,14 @@
 
 <div class="brand-page">
 
-    <div class="container">
+    <div class="container" style="display:flex; gap:30px;">
+
+        <!-- LEFT - Filters -->
+        <div style="width:260px; flex-shrink:0;">
+            @include('user.partials.filter-sidebar')
+        </div>
+
+        <div style="flex:1; min-width:0;">
 
         @if(isset($seller))
             <!-- ========== BRAND HEADER (Seller) ========== -->
@@ -703,28 +710,16 @@
             <!-- ========== FILTER BAR ========== -->
             <div class="filter-bar">
                 <div class="result-count">
-                    Showing <strong>{{ $products->count() }}</strong> product{{ $products->count() > 1 ? 's' : '' }}
+                    Showing <strong>{{ $products->total() }}</strong> product{{ $products->total() > 1 ? 's' : '' }}
                 </div>
                 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                    <select class="sort-select" id="sortSelect">
-                        <option value="default">Sort by: Default</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="name">Name: A to Z</option>
-                        <option value="newest">Newest First</option>
+                    <select class="sort-select" id="sortSelectSearch" onchange="applySortSearch(this.value)">
+                        <option value="newest" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Newest</option>
+                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price Low → High</option>
+                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price High → Low</option>
+                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>A-Z</option>
+                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Z-A</option>
                     </select>
-                    <div class="view-toggle">
-                        <button class="active" id="gridView" title="Grid View">
-                            <svg fill="currentColor" viewBox="0 0 20 20" width="16" height="16">
-                                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 8a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zm6-6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zm0 8a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                            </svg>
-                        </button>
-                        <button id="listView" title="List View">
-                            <svg fill="currentColor" viewBox="0 0 20 20" width="16" height="16">
-                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path>
-                            </svg>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -800,6 +795,13 @@
 
             </div>
 
+            <!-- Pagination -->
+            @if($products->hasPages())
+            <div style="margin-top:40px; display:flex; justify-content:center;">
+                {{ $products->links() }}
+            </div>
+            @endif
+
         @else
             <!-- ========== EMPTY STATE ========== -->
             <div class="no-result">
@@ -841,6 +843,7 @@
         @endif
 
     </div>
+    </div>
 
 </div>
 
@@ -848,43 +851,12 @@
 
 @push('page-scripts')
 <script>
-    // ========== SORT FUNCTIONALITY ==========
-    document.getElementById('sortSelect')?.addEventListener('change', function() {
-        const sortBy = this.value;
-        const grid = document.getElementById('productGrid');
-        const cards = Array.from(grid.querySelectorAll('.product-card'));
-
-        if (sortBy === 'default') {
-            // Reset to original order - just reload
-            return;
-        }
-
-        cards.sort((a, b) => {
-            switch (sortBy) {
-                case 'price-low':
-                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-                case 'price-high':
-                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-                case 'name':
-                    return a.dataset.name.localeCompare(b.dataset.name);
-                default:
-                    return 0;
-            }
-        });
-
-        cards.forEach(card => grid.appendChild(card));
-    });
-
-    // ========== VIEW TOGGLE ==========
-    document.getElementById('gridView')?.addEventListener('click', function() {
-        document.getElementById('gridView').classList.add('active');
-        document.getElementById('listView').classList.remove('active');
-    });
-
-    document.getElementById('listView')?.addEventListener('click', function() {
-        document.getElementById('listView').classList.add('active');
-        document.getElementById('gridView').classList.remove('active');
-    });
+    // ========== SORT ==========
+    function applySortSearch(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', value);
+        window.location.href = url.toString();
+    }
 
     // ========== WISHLIST TOGGLE ==========
     function toggleWishlist(productId, btn) {

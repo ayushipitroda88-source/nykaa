@@ -42,61 +42,83 @@
 
 .category-wrapper{
     display:flex;
-    gap:20px;
+    gap:30px;
 }
 
-/* LEFT */
-
-.category-sidebar{
-    width:240px;
-    flex-shrink:0;
-    background:#fff;
-    border-radius:8px;
-    border:1px solid #e5e5e5;
-    padding:20px;
-}
-
-.category-sidebar h3{
-    font-size:22px;
-    margin-bottom:20px;
-    border-bottom:2px solid #f2f2f2;
-    padding-bottom:10px;
-}
+/* LEFT - Filter sidebar */
 
 /* RIGHT */
 
 .category-products{
     flex:1;
     max-width:1200px;
-    
 }
 
-/* Tree */
-
-.tree ul{
-    list-style:none;
-    padding-left:18px;
+/* Sort & Header bar */
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eaeaea;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-.tree li{
-    margin:8px 0;
+.category-header h2 {
+    font-size:24px;
+    font-weight:800;
+    color: #fc2779;
+    text-transform: uppercase;
+    margin: 0;
 }
 
-.tree a{
-    text-decoration:none;
-    color:#444;
-    transition:.3s;
-    font-size:15px;
+.header-info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-.tree a:hover{
-    color:#fc2779;
-    padding-left:5px;
+.sort-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.active-category{
-    color:#fc2779 !important;
-    font-weight:bold;
+.sort-dropdown label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    white-space: nowrap;
+}
+
+.sort-dropdown select {
+    padding: 8px 32px 8px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 160px;
+}
+
+.sort-dropdown select:hover,
+.sort-dropdown select:focus {
+    border-color: #fc2779;
+}
+
+.products-count {
+    color:#666;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
 }
 
 /* ===========================
@@ -144,11 +166,21 @@
     cursor:pointer;
     box-shadow:0 3px 10px rgba(0,0,0,.15);
     transition:.3s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:16px;
+    color:#aaa;
+}
+
+.wishlist-icon.wishlisted{
+    color:#fc2779 !important;
+    background:#fff0f5;
 }
 
 .wishlist-icon:hover{
     background:#fc2779;
-    color:#fff;
+    color:#fff !important;
 }
 
 /* Image */
@@ -294,101 +326,78 @@
     margin-top:20px;
 }
 
-/* Responsive */
-
-@media(max-width:1200px){
-
-.product-grid{
-grid-template-columns:repeat(3,1fr);
-}
-
-}
-
-@media(max-width:992px){
-
-.category-page{
-    padding:0 20px;
-}
-
-.back-btn{
-    padding-left:0;
-}
-
-.breadcrumb-box{
-    padding-left:0;
-}
-
-.category-wrapper{
-flex-direction:column;
-}
-
-.category-sidebar{
-width:100%;
-border-radius:15px;
-}
-
-.product-grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-}
-
-@media(max-width:600px){
-
-.product-grid{
-grid-template-columns:1fr;
-}
-
-.product-image{
-height:240px;
-}
-
-}
-
-/* ===========================
-   PAGINATION
-=========================== */
+/* Pagination */
 
 .pagination-wrapper{
-
     margin-top:40px;
-
     display:flex;
-
     justify-content:center;
-
 }
 
 .pagination svg{
-
     width:18px;
-
 }
 
 .pagination{
-
     gap:8px;
-
 }
 
 .pagination .page-link{
-
     border:none;
-
     border-radius:8px;
-
     color:#444;
-
     padding:10px 16px;
-
 }
 
 .pagination .active .page-link{
-
     background:#fc2779;
-
     color:#fff;
+}
 
+/* Responsive */
+
+@media(max-width:1200px){
+    .product-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@media(max-width:992px){
+    .category-page{
+        padding:0 20px;
+    }
+    .back-btn{
+        padding-left:0;
+    }
+    .breadcrumb-box{
+        padding-left:0;
+    }
+    .category-wrapper{
+        flex-direction:column;
+    }
+    .product-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+    .category-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .header-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media(max-width:600px){
+    .product-grid{
+        grid-template-columns:1fr;
+    }
+    .product-image{
+        height:240px;
+    }
+    .sort-dropdown select {
+        min-width: 120px;
+    }
 }
 
 </style>
@@ -410,220 +419,168 @@ height:240px;
 
 <div class="category-wrapper">
 
-<!-- LEFT -->
+    <!-- LEFT - Filter Sidebar -->
+    @include('user.partials.filter-sidebar')
 
-<div class="category-sidebar">
+    <!-- RIGHT -->
+    <div class="category-products">
 
-<h3>Categories</h3>
-
-
-
-<div class="tree">
-
-<ul>
-
-<li>
-
-<a href="{{ route('category.show',$category->id) }}"
-class="active-category">
-
-{{ $category->name }}
-
-</a>
-
-@if($category->children->count())
-
-<ul>
-
-@foreach($category->children as $child)
-
-<li>
-
-<a href="{{ route('category.show',$child->id) }}"
-class="{{ $category->id == $child->id ? 'active-category' : '' }}">
-
-{{ $child->name }}
-
-</a>
-
-@if($child->children->count())
-
-<ul>
-
-@foreach($child->children as $sub)
-
-<li>
-
-<a href="{{ route('category.show',$sub->id) }}"
-class="{{ $category->id == $sub->id ? 'active-category' : '' }}">
-
-{{ $sub->name }}
-
-</a>
-
-</li>
-
-@endforeach
-
-</ul>
-
-@endif
-
-</li>
-
-@endforeach
-
-</ul>
-
-@endif
-
-</li>
-
-</ul>
-
-</div> <!-- tree close -->
-</div> <!-- category-sidebar close -->
-<!-- RIGHT -->
-
-<div class="category-products">
-
-<div class="category-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eaeaea;">
-    <h2 style="font-size:24px; font-weight:800; color: #fc2779; text-transform: uppercase; margin: 0;">
-        {{ $category->name }}
-    </h2>
-    <div style="display: flex; gap: 20px; align-items: center;">
-        <span style="color:#666; font-weight: 500; font-size: 14px;">
-            {{ $products->count() }} Products Found
-        </span>
-        <span style="font-size:15px; font-weight:600; color:#333;">
-            Total Products: {{ $products->count() }}
-        </span>
-    </div>
-</div>
-
-<!-- PRODUCT GRID -->
-<div class="product-grid">
-
-
-@forelse($products as $product)
-
-<div class="product-card">
-
-    <!-- Wishlist -->
-    <form action="{{ route('wishlist.add',$product->id) }}" method="POST" class="wishlist-form">
-        @csrf
-        <button type="submit" class="wishlist-icon">
-            <i class="bi bi-heart"></i>
-        </button>
-    </form>
-
-    <!-- Product Image -->
-    <a href="{{ route('product.show',$product->id) }}" class="product-image">
-
-        @if($product->image)
-
-            <img src="{{ asset('uploads/'.$product->image) }}" alt="{{ $product->title }}">
-
-        @else
-
-            <img src="https://via.placeholder.com/300x350">
-
-        @endif
-
-    </a>
-
-    <!-- Product Info -->
-
-    <div class="product-info">
-
-        <div class="product-name">
-
-            <a href="{{ route('product.show',$product->id) }}">
-
-                {{ Str::limit($product->title,45) }}
-
-            </a>
-
+        <!-- Header with Sort -->
+        <div class="category-header">
+            <h2>{{ $category->name }}</h2>
+            <div class="header-info">
+                <span class="products-count">
+                    {{ $products->total() }} Products Found
+                </span>
+                <div class="sort-dropdown">
+                    <label for="sortSelect">Sort By:</label>
+                    <select id="sortSelect" onchange="applySort(this.value)">
+                        <option value="newest" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Newest</option>
+                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price Low → High</option>
+                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price High → Low</option>
+                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>A-Z</option>
+                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Z-A</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <div class="price">
+        <!-- PRODUCT GRID -->
+        <div class="product-grid">
 
-            ₹{{ number_format($product->price,2) }}
+        @forelse($products as $product)
 
-        </div>
+        <div class="product-card">
 
-        @if($product->quantity>0)
-
-            <span class="stock in-stock">
-
-                In Stock
-
-            </span>
-
-        @else
-
-            <span class="stock out-stock">
-
-                Out of Stock
-
-            </span>
-
-        @endif
-
-        <div class="product-buttons">
-
-            <a href="{{ route('product.show',$product->id) }}" class="view-btn">
-
-                View
-
-            </a>
-
-            <form action="{{ route('cart.add',$product->id) }}" method="POST">
-
+            <!-- Wishlist -->
+            <form action="{{ route('wishlist.add',$product->id) }}" method="POST" class="wishlist-form">
                 @csrf
-
-                <button class="cart-btn">
-
-                    Add
-
+                <button type="submit" class="wishlist-icon {{ in_array($product->id, $wishlistProductIds) ? 'wishlisted' : '' }}" title="{{ in_array($product->id, $wishlistProductIds) ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
+                    @if(in_array($product->id, $wishlistProductIds))
+                        <i class="bi bi-heart-fill"></i>
+                    @else
+                        <i class="bi bi-heart"></i>
+                    @endif
                 </button>
-
             </form>
 
+            <!-- Product Image -->
+            <a href="{{ route('product.show',$product->id) }}" class="product-image">
+
+                @if($product->image)
+
+                    <img src="{{ asset('uploads/'.$product->image) }}" alt="{{ $product->title }}">
+
+                @else
+
+                    <img src="https://via.placeholder.com/300x350">
+
+                @endif
+
+            </a>
+
+            <!-- Product Info -->
+
+            <div class="product-info">
+
+                <div class="product-name">
+
+                    <a href="{{ route('product.show',$product->id) }}">
+
+                        {{ Str::limit($product->title,45) }}
+
+                    </a>
+
+                </div>
+
+                <div class="price">
+
+                    ₹{{ number_format($product->price,2) }}
+
+                </div>
+
+                @if($product->quantity>0)
+
+                    <span class="stock in-stock">
+
+                        In Stock
+
+                    </span>
+
+                @else
+
+                    <span class="stock out-stock">
+
+                        Out of Stock
+
+                    </span>
+
+                @endif
+
+                <div class="product-buttons">
+
+                    <a href="{{ route('product.show',$product->id) }}" class="view-btn">
+
+                        View
+
+                    </a>
+
+                    <form action="{{ route('cart.add',$product->id) }}" method="POST">
+
+                        @csrf
+
+                        <button class="cart-btn">
+
+                            Add
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        @empty
+
+        <div class="empty-products">
+
+            <i class="bi bi-bag-x"></i>
+
+            <h3>No Products Found</h3>
+
+            <p>No products available matching your criteria.</p>
+
+        </div>
+
+        @endforelse
+
+        @if($products->hasPages())
+
+        <div class="pagination-wrapper">
+
+            {{ $products->links() }}
+
+        </div>
+
+        @endif
+
         </div>
 
     </div>
 
 </div>
 
-@empty
-
-<div class="empty-products">
-
-    <i class="bi bi-bag-x"></i>
-
-    <h3>No Products Found</h3>
-
-    <p>No products available in this category.</p>
-
-</div>
-
-@endforelse
-
-@if($products->hasPages())
-
-<div class="pagination-wrapper">
-
-    {{ $products->links() }}
-
-</div>
-
-@endif
-
-</div>
-
-</div>
-
-</div>
+@push('page-scripts')
+<script>
+function applySort(value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', value);
+    window.location.href = url.toString();
+}
+</script>
+@endpush
 
 @endsection

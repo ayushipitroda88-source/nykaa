@@ -20,29 +20,32 @@ class ProductController extends Controller
     public function create()
     {
         $mainCategories = Category::whereNull('parent_id')->orderBy('position')->get();
-        $brands = Brand::all();
-        return view('seller.products.create', compact('mainCategories', 'brands'));
+        return view('seller.products.create', compact('mainCategories'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
         ]);
 
-        $file = $request->file('image');
-        $name = time() . '.' . $file->extension();
-        $file->move(public_path('uploads'), $name);
-        $validated['image'] = $name;
+        $seller = Auth::guard('seller')->user();
+        
+        // Auto-resolve Brand based on seller's business_name
+        $brand = Brand::firstOrCreate(
+            ['name' => $seller->business_name],
+            ['status' => 1, 'slug' => \Illuminate\Support\Str::slug($seller->business_name)]
+        );
 
-        $validated['seller_id'] = Auth::guard('seller')->id();
+        $validated['brand_id'] = $brand->id;
+        $validated['seller_id'] = $seller->id;
         $validated['status'] = 'pending';
+        // Set default values for dropped fields that are still required by admin products
+        $validated['price'] = 0;
+        $validated['quantity'] = 0;
+        $validated['image'] = '';
 
         $product = Product::create($validated);
 
@@ -54,7 +57,6 @@ class ProductController extends Controller
         $product = Product::where('seller_id', Auth::guard('seller')->id())->findOrFail($id);
         
         $mainCategories = Category::whereNull('parent_id')->orderBy('position')->get();
-        $brands = Brand::all();
         
         $childCategory = Category::find($product->category_id);
         $subCategory = null;
@@ -67,7 +69,7 @@ class ProductController extends Controller
             }
         }
 
-        return view('seller.products.edit', compact('product', 'mainCategories', 'brands', 'mainCategory', 'subCategory', 'childCategory'));
+        return view('seller.products.edit', compact('product', 'mainCategories', 'mainCategory', 'subCategory', 'childCategory'));
     }
 
     public function update(Request $request, $id)
@@ -76,20 +78,9 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
         ]);
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $name = time() . '.' . $file->extension();
-            $file->move(public_path('uploads'), $name);
-            $validated['image'] = $name;
-        }
 
         $product->update($validated);
 

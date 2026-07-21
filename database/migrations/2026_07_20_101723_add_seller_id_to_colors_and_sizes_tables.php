@@ -1,0 +1,44 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        // Add seller_id to colors table
+        Schema::table('colors', function (Blueprint $table) {
+            if (!Schema::hasColumn('colors', 'seller_id')) {
+                $table->foreignId('seller_id')->nullable()->constrained('sellers')->nullOnDelete();
+            }
+        });
+
+        // Add seller_id to sizes table
+        Schema::table('sizes', function (Blueprint $table) {
+            if (!Schema::hasColumn('sizes', 'seller_id')) {
+                $table->foreignId('seller_id')->nullable()->constrained('sellers')->nullOnDelete();
+            }
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('colors', function (Blueprint $table) {
+            $table->dropForeign(['seller_id']);
+            $table->dropColumn('seller_id');
+        });
+
+        Schema::table('sizes', function (Blueprint $table) {
+            $table->dropForeign(['seller_id']);
+            $table->dropColumn('seller_id');
+        });
+    }
+};

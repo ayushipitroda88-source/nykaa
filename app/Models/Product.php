@@ -42,9 +42,9 @@ class Product extends Model
     }
 
     public function collections()
-{
-    return $this->belongsToMany(Collection::class);
-}
+    {
+        return $this->belongsToMany(Collection::class);
+    }
 
     public function brand(): BelongsTo
     {
@@ -61,31 +61,47 @@ class Product extends Model
         return $this->belongsToMany(Size::class, 'product_size');
     }
 
-public function getDiscountedPrice($collectionId = null)
-{
-    $price = $this->price;
+    public function getDiscountedPrice($collectionId = null)
+    {
+        $price = $this->price;
 
-    if ($collectionId) {
+        if ($collectionId) {
 
-        $collection = $this->collections()
-            ->where('collections.id', $collectionId)
-            ->first();
+            $collection = $this->collections()
+                ->where('collections.id', $collectionId)
+                ->first();
 
-        if (
-            $collection &&
-            $collection->discount > 0 &&
-            now()->between($collection->discount_start, $collection->discount_end)
-        ) {
+            if (
+                $collection &&
+                $collection->discount > 0 &&
+                now()->between($collection->discount_start, $collection->discount_end)
+            ) {
 
-            $price = $price - ($price * $collection->discount / 100);
+                $price = $price - ($price * $collection->discount / 100);
+            }
         }
+
+        return round($price, 2);
     }
 
-    return round($price, 2);
-}
-public function variants()
-{
-    return $this->hasMany(ProductVariant::class);
-}
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
 
+    public function getImageAttribute($value)
+    {
+        // Always prioritize the first variant's image if variants exist
+        $firstVariant = $this->variants()->orderBy('priority')->first();
+        if ($firstVariant && $firstVariant->image) {
+            return 'variants/' . $firstVariant->image;
+        }
+
+        // Fallback to legacy product image if no variants exist
+        if (!empty($value)) {
+            return $value;
+        }
+
+        return '';
+    }
 }

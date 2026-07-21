@@ -140,7 +140,7 @@
                                 @endif
                             </td>
 
-                            {{-- Created Date --}}
+                            {{-- Created Date --}}         
                             <td>
                                 <small class="text-muted">
                                     {{ $product->created_at->format('d M Y') }}

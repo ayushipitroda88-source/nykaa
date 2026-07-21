@@ -71,14 +71,14 @@
 <li class="nav-item">
     <a href="{{ route('color.index') }}" class="nav-link">
         <i class="nav-icon fas fa-palette"></i>
-        <p>Colors</p>
+        <p>Seller Colors</p>
     </a>
 </li>
 
 <li class="nav-item">
     <a href="{{ route('size.index') }}" class="nav-link">
         <i class="nav-icon fas fa-ruler-combined"></i>
-        <p>Sizes</p>
+        <p>Seller Sizes</p>
     </a>
 </li>
 

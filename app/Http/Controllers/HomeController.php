@@ -30,7 +30,7 @@ $sellers = Seller::where('status', 'approved')->get();
     'category',
     'collections',
     'variants.color',
-    'variants.size'
+    'variants.sizes'
 ])->where('status', 'approved')->get();
     // Collections
     $collections = Collection::where('status',1)
