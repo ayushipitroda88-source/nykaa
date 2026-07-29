@@ -1,22 +1,27 @@
 @extends('layout.seller')
 
+@section('page-title', 'Orders')
+
 @section('content')
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">My Orders</h5>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1" style="color:var(--nykaa-dark);">My Orders</h4>
+        <p class="text-muted mb-0">Track and manage customer orders</p>
     </div>
-    <div class="card-body">
+</div>
+
+<div class="seller-card">
+    <div class="card-body-custom p-0">
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
+            <table class="seller-table">
+                <thead>
                     <tr>
                         <th>Order ID</th>
                         <th>Product</th>
                         <th>Customer</th>
-                        <th>Quantity</th>
-                        <th>Price (Each)</th>
+                        <th>Qty</th>
                         <th>Total</th>
-                        <th>Order Status</th>
+                        <th>Status</th>
                         <th>Date</th>
                         <th>Action</th>
                     </tr>
@@ -24,34 +29,45 @@
                 <tbody>
                     @forelse($orderItems as $item)
                         <tr>
-                            <td class="align-middle">#{{ $item->order_id }}</td>
-                            <td class="align-middle">
+                            <td><span class="fw-semibold">#{{ $item->order_id }}</span></td>
+                            <td>
                                 @if($item->product)
                                     <div class="d-flex align-items-center">
-                                        <img src="{{ asset('uploads/' . $item->product->image) }}" alt="{{ $item->product->title }}" class="img-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">
-                                        <span>{{ Str::limit($item->product->title, 30) }}</span>
+                                        <img src="{{ asset('uploads/' . $item->product->image) }}" alt="{{ $item->product->title }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" class="me-2">
+                                        <span>{{ Str::limit($item->product->title, 28) }}</span>
                                     </div>
                                 @else
-                                    <span class="text-danger">Product Deleted</span>
+                                    <span style="color:var(--nykaa-danger);">Product Deleted</span>
                                 @endif
                             </td>
-                            <td class="align-middle">{{ $item->order->user->name ?? 'Unknown' }}</td>
-                            <td class="align-middle">{{ $item->quantity }}</td>
-                            <td class="align-middle">₹{{ number_format($item->price, 2) }}</td>
-                            <td class="align-middle">₹{{ number_format($item->quantity * $item->price, 2) }}</td>
-                            <td class="align-middle">
-                                <span class="badge bg-{{ optional($item->order)->status == 'completed' ? 'success' : (optional($item->order)->status == 'cancelled' ? 'danger' : 'warning') }}">
-                                    {{ ucfirst($item->order->status ?? 'pending') }}
-                                </span>
+                            <td>{{ $item->order->user->name ?? 'Unknown' }}</td>
+                            <td class="fw-semibold">{{ $item->quantity }}</td>
+                            <td class="fw-bold" style="color:var(--nykaa-dark);">₹{{ number_format($item->quantity * $item->price, 2) }}</td>
+                            <td>
+                                @php
+                                    $status = $item->order->status ?? 'pending';
+                                    $badgeClass = match($status) {
+                                        'completed' => 'bg-approved',
+                                        'cancelled' => 'bg-rejected',
+                                        'pending' => 'bg-pending',
+                                        default => 'bg-pending'
+                                    };
+                                @endphp
+                                <span class="badge-nykaa {{ $badgeClass }}">{{ ucfirst($status) }}</span>
                             </td>
-                            <td class="align-middle">{{ $item->created_at->format('d M Y, h:i A') }}</td>
-                            <td class="align-middle">
-                                <a href="{{ route('seller.orders.show', $item->id) }}" class="btn btn-sm btn-info text-white">View</a>
+                            <td><small class="text-muted">{{ $item->created_at->format('d M Y, h:i A') }}</small></td>
+                            <td>
+                                <a href="{{ route('seller.orders.show', $item->id) }}" class="btn-action view">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center text-muted">No orders found.</td>
+                            <td colspan="8" class="text-center py-5" style="color:var(--nykaa-text-light);">
+                                <i class="fas fa-truck fa-2x mb-2 d-block"></i>
+                                No orders found.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>

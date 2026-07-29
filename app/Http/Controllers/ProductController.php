@@ -87,6 +87,43 @@ class ProductController extends Controller
     {
         $product = Product::with(['category', 'collections', 'brand', 'colors', 'sizes'])->where('status', 'approved')->findOrFail($id);
 
+        $ratingService = app(\App\Services\RatingService::class);
+        $ratingData = $ratingService->getRatingBreakdown($product->id);
+
+        // Fetch Approved Reviews with filtering & sorting
+        $ratingFilter = request()->query('review_filter', 'all');
+        $ratingSort = request()->query('review_sort', 'newest');
+
+        $reviewsQuery = $product->approvedReviews()->with(['user', 'images', 'reply.seller']);
+
+        if ($ratingFilter !== 'all') {
+            if ($ratingFilter === 'with_images') {
+                $reviewsQuery->whereHas('images');
+            } elseif (in_array((int)$ratingFilter, [1, 2, 3, 4, 5])) {
+                $reviewsQuery->where('rating', (int)$ratingFilter);
+            }
+        }
+
+        switch ($ratingSort) {
+            case 'oldest':
+                $reviewsQuery->orderBy('created_at', 'asc');
+                break;
+            case 'highest':
+                $reviewsQuery->orderBy('rating', 'desc');
+                break;
+            case 'lowest':
+                $reviewsQuery->orderBy('rating', 'asc');
+                break;
+            case 'most_helpful':
+                $reviewsQuery->orderBy('helpful_count', 'desc');
+                break;
+            default:
+                $reviewsQuery->orderBy('created_at', 'desc');
+                break;
+        }
+
+        $reviews = $reviewsQuery->paginate(5)->withQueryString();
+
         $collectionId = request()->query('collection_id');
         $collection = null;
         $discountedPrice = $product->price;
@@ -123,7 +160,11 @@ class ProductController extends Controller
             'collectionId',
             'collection',
             'hasDiscount',
-            'discountedPrice'
+            'discountedPrice',
+            'ratingData',
+            'reviews',
+            'ratingFilter',
+            'ratingSort'
         ));
     }
     

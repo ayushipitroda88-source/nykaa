@@ -145,73 +145,7 @@
                                     <i class="fas fa-eye"></i>
                                 </a>
 
-                                <a href="{{ route('admin.sellers.products', $seller->id) }}" class="btn btn-sm btn-outline-warning" title="View Products">
-                                    <i class="fas fa-box"></i>
-                                </a>
 
-                                <a href="{{ route('admin.sellers.colors', $seller->id) }}" class="btn btn-sm btn-outline-primary" title="View Colors">
-                                    <i class="fas fa-palette"></i>
-                                </a>
-
-                                <a href="{{ route('admin.sellers.sizes', $seller->id) }}" class="btn btn-sm btn-outline-success" title="View Sizes">
-                                    <i class="fas fa-ruler"></i>
-                                </a>
-
-                                @if($seller->status == 'pending' || $seller->status == 'rejected' || $seller->status == 'suspended')
-                                    <form action="{{ route('admin.sellers.status', $seller->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status" value="approved">
-                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Approve">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
-                                @endif
-
-                                @if($seller->status == 'rejected' || $seller->status == 'suspended')
-                                    <form action="{{ route('admin.sellers.status', $seller->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status" value="pending">
-                                        <button type="submit" class="btn btn-sm btn-outline-warning" title="Set to Pending">
-                                            <i class="fas fa-clock"></i>
-                                        </button>
-                                    </form>
-                                @endif
-
-                                @if($seller->status == 'pending' || $seller->status == 'approved')
-                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Reject" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $seller->id }}">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    
-                                    {{-- Reject Modal --}}
-                                    <div class="modal fade text-start" id="rejectModal{{ $seller->id }}" tabindex="-1" aria-labelledby="rejectModalLabel{{ $seller->id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <form action="{{ route('admin.sellers.status', $seller->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="rejected">
-                                                    <div class="modal-header bg-danger text-white">
-                                                        <h5 class="modal-title" id="rejectModalLabel{{ $seller->id }}">Reject Seller</h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Are you sure you want to reject the seller <strong>{{ $seller->business_name }}</strong>?</p>
-                                                        <div class="mb-3">
-                                                            <label for="rejection_reason_{{ $seller->id }}" class="form-label">Reason for Rejection <span class="text-danger">*</span></label>
-                                                            <textarea class="form-control" id="rejection_reason_{{ $seller->id }}" name="rejection_reason" rows="3" required placeholder="Please provide a reason for rejecting this seller..."></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-danger">Confirm Reject</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
                                 
                                 @if($seller->status == 'approved')
                                     <button type="button" class="btn btn-sm btn-outline-dark" title="Suspend" data-bs-toggle="modal" data-bs-target="#suspendModal{{ $seller->id }}">

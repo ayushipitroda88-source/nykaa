@@ -83,4 +83,81 @@ class SellerManagementController extends Controller
 
         return redirect()->back()->with('success', $message);
     }
+
+    public function products(Request $request, $id)
+    {
+        $seller = Seller::findOrFail($id);
+        
+        $currentStatus = $request->query('status', 'all');
+        $search = $request->query('search');
+
+        $query = $seller->products()->with(['category', 'brand']);
+
+        if ($currentStatus !== 'all') {
+            $query->where('status', $currentStatus);
+        }
+
+        if ($search) {
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        $products = $query->latest()->paginate(15);
+
+        $statusCounts = [
+            'all' => $seller->products()->count(),
+            'pending' => $seller->products()->where('status', 'pending')->count(),
+            'resubmitted' => $seller->products()->where('status', 'resubmitted')->count(),
+            'approved' => $seller->products()->where('status', 'approved')->count(),
+            'rejected' => $seller->products()->where('status', 'rejected')->count(),
+        ];
+
+        return view('admin.sellers.products', compact('seller', 'products', 'currentStatus', 'statusCounts'));
+    }
+
+    public function colors(Request $request, $id)
+    {
+        $seller = Seller::findOrFail($id);
+        
+        $search = $request->query('search');
+        $query = $seller->colors();
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('color_code', 'like', "%{$search}%");
+            });
+        }
+
+        $colors = $query->latest()->paginate(15);
+        return view('admin.sellers.colors', compact('seller', 'colors'));
+    }
+
+    public function destroyColor($sellerId, $colorId)
+    {
+        $color = \App\Models\Color::where('seller_id', $sellerId)->findOrFail($colorId);
+        $color->delete();
+        return back()->with('success', 'Color deleted successfully.');
+    }
+
+    public function sizes(Request $request, $id)
+    {
+        $seller = Seller::findOrFail($id);
+        
+        $search = $request->query('search');
+        $query = $seller->sizes();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $sizes = $query->latest()->paginate(15);
+        return view('admin.sellers.sizes', compact('seller', 'sizes'));
+    }
+
+    public function destroySize($sellerId, $sizeId)
+    {
+        $size = \App\Models\Size::where('seller_id', $sellerId)->findOrFail($sizeId);
+        $size->delete();
+        return back()->with('success', 'Size deleted successfully.');
+    }
 }

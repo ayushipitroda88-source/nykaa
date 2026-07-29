@@ -16,6 +16,8 @@ class Product extends Model
         'price',
         'quantity',
         'seller_id',
+        'average_rating',
+        'total_reviews',
         'status',
         'rejection_reason',
         'approved_by',
@@ -24,7 +26,19 @@ class Product extends Model
 
     protected $casts = [
         'approved_at' => 'datetime',
+        'average_rating' => 'float',
+        'total_reviews' => 'integer',
     ];
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(Review::class)->where('status', 'approved');
+    }
 
     public function category(): BelongsTo
     {

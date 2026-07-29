@@ -57,4 +57,9 @@ class Seller extends Authenticatable
     {
         return $this->hasMany(Size::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasManyThrough(Review::class, Product::class);
+    }
 }

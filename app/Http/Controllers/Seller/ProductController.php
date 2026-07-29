@@ -56,37 +56,22 @@ class ProductController extends Controller
     {
         $product = Product::where('seller_id', Auth::guard('seller')->id())->findOrFail($id);
         
-        $mainCategories = Category::whereNull('parent_id')->orderBy('position')->get();
-        
-        $childCategory = Category::find($product->category_id);
-        $subCategory = null;
-        $mainCategory = null;
-
-        if ($childCategory) {
-            $subCategory = $childCategory->parent;
-            if ($subCategory) {
-                $mainCategory = $subCategory->parent;
-            }
-        }
-
-        return view('seller.products.edit', compact('product', 'mainCategories', 'mainCategory', 'subCategory', 'childCategory'));
+        // Redirect to Request Center for product edit
+        return redirect()->route('seller.request-center.create', [
+            'product_id' => $product->id,
+            'type' => 'product_edit',
+        ]);
     }
 
     public function update(Request $request, $id)
     {
         $product = Product::where('seller_id', Auth::guard('seller')->id())->findOrFail($id);
-
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        $product->update($validated);
-
-        // If the product was rejected and seller is saving changes, 
-        // check if they want to resubmit (handled via separate resubmit button)
-        return redirect()->route('seller.products.index')->with('success', 'Product updated successfully.');
+        
+        // Direct updates are disabled. Redirect to Request Center.
+        return redirect()->route('seller.request-center.create', [
+            'product_id' => $product->id,
+            'type' => 'product_edit',
+        ])->with('info', 'Product edits must go through the Request Center for admin approval.');
     }
 
     /**
@@ -111,7 +96,11 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::where('seller_id', Auth::guard('seller')->id())->findOrFail($id);
-        $product->delete();
-        return redirect()->route('seller.products.index')->with('success', 'Product deleted successfully.');
+        
+        // Redirect to Request Center for product delete
+        return redirect()->route('seller.request-center.create', [
+            'product_id' => $product->id,
+            'type' => 'product_delete',
+        ])->with('info', 'Product deletion must go through the Request Center for admin approval.');
     }
 }

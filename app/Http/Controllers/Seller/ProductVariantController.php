@@ -142,7 +142,11 @@ class ProductVariantController extends Controller
             abort(404);
         }
 
-        $variant->delete();
-        return back()->with('success', 'Variant Deleted Successfully');
+        // Direct variant deletion is disabled. Redirect to Request Center.
+        return redirect()->route('seller.request-center.create', [
+            'product_id' => $variant->product_id,
+            'variant_id' => $variant->id,
+            'type' => 'variant_delete',
+        ])->with('info', 'Variant deletion must go through the Request Center for admin approval.');
     }
 }

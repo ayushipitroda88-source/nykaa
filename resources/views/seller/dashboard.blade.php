@@ -1,182 +1,159 @@
 @extends('layout.seller')
 
+@section('page-title', 'Dashboard')
+
 @section('content')
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold">Welcome, {{ Auth::guard('seller')->user()->business_name }}</h2>
-        <p class="text-muted">Here is what's happening with your store today.</p>
-    </div>
+{{-- Welcome Section --}}
+<div class="mb-4">
+    <h2 class="fw-bold" style="color: var(--nykaa-dark);">Welcome back, {{ Auth::guard('seller')->user()->business_name }} 👋</h2>
+    <p style="color: var(--nykaa-text-light);">Here's what's happening with your store today.</p>
 </div>
 
-{{-- Product Approval Status Widgets --}}
-<div class="row g-3 mb-4">
-    <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm h-100 border-start border-warning border-4">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold text-warning mb-1">Pending Approval</h6>
-                <h2 class="fw-bold mb-0 text-warning">{{ $pendingProducts }}</h2>
-                <small class="text-muted">Awaiting review</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm h-100 border-start border-success border-4">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold text-success mb-1">Approved</h6>
-                <h2 class="fw-bold mb-0 text-success">{{ $approvedProducts }}</h2>
-                <small class="text-muted">Live on marketplace</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm h-100 border-start border-danger border-4">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold text-danger mb-1">Rejected</h6>
-                <h2 class="fw-bold mb-0 text-danger">{{ $rejectedProducts }}</h2>
-                <small class="text-muted">Needs changes</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm h-100 border-start border-info border-4">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold text-info mb-1">Resubmitted</h6>
-                <h2 class="fw-bold mb-0 text-info">{{ $resubmittedProducts }}</h2>
-                <small class="text-muted">Re-reviewed</small>
-            </div>
-        </div>
-    </div>
-</div>
-
+{{-- Approval Status Cards --}}
 <div class="row g-4 mb-4">
-    <!-- Total Products -->
-    <div class="col-md-4 col-lg-3">
-        <div class="card shadow-sm h-100 border-0 bg-primary text-white">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold mb-2">Total Products</h6>
-                <h2 class="display-5 fw-bold mb-0">{{ $totalProducts }}</h2>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card warning">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value">{{ $pendingProducts }}</div>
+            <div class="stat-label">Pending Approval</div>
         </div>
     </div>
-    
-    <!-- Pending Orders -->
-    <div class="col-md-4 col-lg-3">
-        <div class="card shadow-sm h-100 border-0 bg-warning text-dark">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold mb-2">Pending Orders</h6>
-                <h2 class="display-5 fw-bold mb-0">{{ $pendingOrders }}</h2>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card success">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-value">{{ $approvedProducts }}</div>
+            <div class="stat-label">Approved</div>
         </div>
     </div>
-
-    <!-- Completed Orders -->
-    <div class="col-md-4 col-lg-3">
-        <div class="card shadow-sm h-100 border-0 bg-success text-white">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold mb-2">Completed Orders</h6>
-                <h2 class="display-5 fw-bold mb-0">{{ $completedOrders }}</h2>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card danger">
+            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-value">{{ $rejectedProducts }}</div>
+            <div class="stat-label">Rejected</div>
         </div>
     </div>
-
-    <!-- Revenue -->
-    <div class="col-md-12 col-lg-3">
-        <div class="card shadow-sm h-100 border-0 bg-info text-white">
-            <div class="card-body">
-                <h6 class="text-uppercase fw-semibold mb-2">Revenue</h6>
-                <div class="mb-2">
-                    <span class="d-block text-white-50 small">Today</span>
-                    <h4 class="fw-bold mb-0">₹{{ number_format($todaysRevenue, 2) }}</h4>
-                </div>
-                <div>
-                    <span class="d-block text-white-50 small">This Month</span>
-                    <h4 class="fw-bold mb-0">₹{{ number_format($monthlyRevenue, 2) }}</h4>
-                </div>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card info">
+            <div class="stat-icon"><i class="fas fa-redo"></i></div>
+            <div class="stat-value">{{ $resubmittedProducts }}</div>
+            <div class="stat-label">Resubmitted</div>
         </div>
     </div>
 </div>
 
+{{-- Stats Row 2 --}}
 <div class="row g-4 mb-4">
-    <!-- Cart Activity -->
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow-sm h-100 border-0 bg-primary text-white">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold mb-2">Cart Activity</h6>
-                <h2 class="display-5 fw-bold mb-0">{{ $cartActivity }}</h2>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card pink">
+            <div class="stat-icon"><i class="fas fa-box"></i></div>
+            <div class="stat-value">{{ $totalProducts }}</div>
+            <div class="stat-label">Total Products</div>
         </div>
     </div>
-    
-    <!-- Wishlist Activity -->
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow-sm h-100 border-0 bg-info text-white">
-            <div class="card-body text-center">
-                <h6 class="text-uppercase fw-semibold mb-2">Wishlist Activity</h6>
-                <h2 class="display-5 fw-bold mb-0">{{ $wishlistActivity }}</h2>
+    <div class="col-md-3 col-6">
+        <div class="stat-card warning">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value">{{ $pendingOrders }}</div>
+            <div class="stat-label">Pending Orders</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card success">
+            <div class="stat-icon"><i class="fas fa-check-double"></i></div>
+            <div class="stat-value">{{ $completedOrders }}</div>
+            <div class="stat-label">Completed Orders</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card info">
+            <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="stat-value">{{ $cartActivity }}</div>
+            <div class="stat-label">Cart Activity</div>
+        </div>
+    </div>
+</div>
+
+{{-- Revenue + Wishlist + Popular Product --}}
+<div class="row g-4 mb-4">
+    {{-- Revenue Card --}}
+    <div class="col-md-4">
+        <div class="seller-card h-100 p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="stat-icon" style="width:44px;height:44px;border-radius:10px;background:var(--nykaa-pink-light);color:var(--nykaa-pink);display:flex;align-items:center;justify-content:center;font-size:20px;">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <h6 class="fw-bold mb-0" style="color:var(--nykaa-dark);">Revenue</h6>
+            </div>
+            <div class="mb-2">
+                <span class="d-block text-muted small">Today</span>
+                <h4 class="fw-bold mb-0">₹{{ number_format($todaysRevenue, 2) }}</h4>
+            </div>
+            <div>
+                <span class="d-block text-muted small">This Month</span>
+                <h4 class="fw-bold mb-0">₹{{ number_format($monthlyRevenue, 2) }}</h4>
             </div>
         </div>
     </div>
 
-    <!-- Most Popular Product -->
-    <div class="col-md-12 col-lg-4">
-        <div class="card shadow-sm h-100 border-0">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                <h6 class="fw-bold text-uppercase text-secondary">Most Popular Product</h6>
-            </div>
-            <div class="card-body">
-                @if($mostPopularProduct)
-                    <div class="d-flex align-items-center">
-                        <img src="{{ asset('uploads/'.$mostPopularProduct->image) }}" alt="" style="width: 50px; height: 50px; object-fit: cover;" class="rounded me-3">
-                        <div>
-                            <h6 class="mb-1 text-dark">{{ $mostPopularProduct->title }}</h6>
-                            <span class="badge bg-success">{{ $mostPopularProduct->cart_users_count }} Cart Users</span>
-                        </div>
+    {{-- Wishlist Activity --}}
+    <div class="col-md-4">
+        <div class="stat-card info h-100">
+            <div class="stat-icon"><i class="fas fa-heart"></i></div>
+            <div class="stat-value">{{ $wishlistActivity }}</div>
+            <div class="stat-label">Wishlist Activity</div>
+        </div>
+    </div>
+
+    {{-- Most Popular Product --}}
+    <div class="col-md-4">
+        <div class="seller-card h-100 p-4">
+            <h6 class="fw-bold mb-3" style="color:var(--nykaa-dark);">⭐ Most Popular Product</h6>
+            @if($mostPopularProduct)
+                <div class="d-flex align-items-center">
+                    <img src="{{ asset('uploads/'.$mostPopularProduct->image) }}" alt="" style="width: 52px; height: 52px; object-fit: cover; border-radius: 10px;" class="me-3">
+                    <div>
+                        <h6 class="mb-1" style="color:var(--nykaa-dark);">{{ $mostPopularProduct->title }}</h6>
+                        <span class="badge-nykaa bg-approved">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            {{ $mostPopularProduct->cart_users_count }} Cart Users
+                        </span>
                     </div>
-                @else
-                    <p class="text-muted mb-0">No data available.</p>
-                @endif
-            </div>
+                </div>
+            @else
+                <p class="text-muted mb-0">No data available.</p>
+            @endif
         </div>
     </div>
 </div>
 
-<div class="row">
-    <!-- Quick Actions or Info -->
+{{-- Quick Actions + Store Status --}}
+<div class="row g-4">
     <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                <h5 class="fw-bold">Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ route('seller.products.create') }}" class="btn btn-outline-primary text-start">
-                        ➕ Add New Product
-                    </a>
-                    <a href="{{ route('seller.orders.index') }}" class="btn btn-outline-secondary text-start">
-                        📦 View All Orders
-                    </a>
-                </div>
+        <div class="seller-card p-4">
+            <h5 class="fw-bold mb-3" style="color:var(--nykaa-dark);">Quick Actions</h5>
+            <div class="d-grid gap-2">
+                <a href="{{ route('seller.products.create') }}" class="btn-nykaa text-center text-decoration-none">
+                    <i class="fas fa-plus me-2"></i>Add New Product
+                </a>
+                <a href="{{ route('seller.orders.index') }}" class="btn-nykaa-outline text-center text-decoration-none mt-2">
+                    <i class="fas fa-truck me-2"></i>View All Orders
+                </a>
             </div>
         </div>
     </div>
 
     <div class="col-md-6">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                <h5 class="fw-bold">Store Status</h5>
+        <div class="seller-card p-4">
+            <h5 class="fw-bold mb-3" style="color:var(--nykaa-dark);">Store Status</h5>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <span style="color:var(--nykaa-text);">Approval Status</span>
+                <span class="badge-nykaa bg-approved">
+                    <i class="fas fa-check-circle me-1"></i>Approved
+                </span>
             </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        Approval Status
-                        <span class="badge bg-success rounded-pill">Approved</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        Joined Date
-                        <span class="text-muted">{{ Auth::guard('seller')->user()->created_at->format('M d, Y') }}</span>
-                    </li>
-                </ul>
+            <div class="d-flex justify-content-between align-items-center py-2">
+                <span style="color:var(--nykaa-text);">Joined Date</span>
+                <span class="text-muted">{{ Auth::guard('seller')->user()->created_at->format('M d, Y') }}</span>
             </div>
         </div>
     </div>

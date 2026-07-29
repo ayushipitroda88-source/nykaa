@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'seller.auth' => \App\Http\Middleware\SellerAuthenticate::class,
             'seller.approved' => \App\Http\Middleware\ApprovedSeller::class,
             'admin.auth' => \App\Http\Middleware\AdminAuthenticate::class,
+            'super.admin' => \App\Http\Middleware\SuperAdmin::class,
+            'permission' => \App\Http\Middleware\PermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

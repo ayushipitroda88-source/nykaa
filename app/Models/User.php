@@ -39,8 +39,17 @@ class User extends Authenticatable
     }
     
 public function wishlists(): HasMany
-  {
-     return $this->hasMany(Wishlist::class); 
-     // Agar aapka model alag naam se hai jaise Wishlist ya WishlistModel toh wahi likhein.
-  }
+    {
+       return $this->hasMany(Wishlist::class); 
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 }

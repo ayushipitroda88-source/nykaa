@@ -131,9 +131,9 @@
                                 </td>
                                 
                                 <td class="text-center">
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteVariant({{ $variant->id }}, this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <a href="{{ route('seller.request-center.create', ['product_id' => $product->id, 'variant_id' => $variant->id, 'type' => 'variant_delete']) }}" class="btn btn-outline-danger btn-sm mb-1" title="Request Delete">
+                                        <i class="fas fa-trash"></i> Del
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

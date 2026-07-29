@@ -1,58 +1,61 @@
 @extends('layout.seller')
 
+@section('page-title', 'Products')
+
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="mb-0">My Products</h3>
     <div>
-        <a href="{{ route('seller.products.create') }}" class="btn btn-primary">➕ Add New Product</a>
+        <h4 class="fw-bold mb-1" style="color:var(--nykaa-dark);">My Products</h4>
+        <p class="text-muted mb-0">Manage your product catalog</p>
+    </div>
+    <div>
+        <a href="{{ route('seller.products.create') }}" class="btn-nykaa text-decoration-none">
+            <i class="fas fa-plus me-1"></i> Add New Product
+        </a>
     </div>
 </div>
 
 {{-- Status Summary Cards --}}
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm bg-warning bg-opacity-10">
-            <div class="card-body text-center py-3">
-                <h6 class="text-uppercase fw-semibold text-warning mb-1">Pending</h6>
-                <h3 class="fw-bold mb-0">{{ $products->where('status', 'pending')->count() }}</h3>
-            </div>
+        <div class="stat-card warning">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value">{{ $products->where('status', 'pending')->count() }}</div>
+            <div class="stat-label">Pending</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm bg-success bg-opacity-10">
-            <div class="card-body text-center py-3">
-                <h6 class="text-uppercase fw-semibold text-success mb-1">Approved</h6>
-                <h3 class="fw-bold mb-0">{{ $products->where('status', 'approved')->count() }}</h3>
-            </div>
+        <div class="stat-card success">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-value">{{ $products->where('status', 'approved')->count() }}</div>
+            <div class="stat-label">Approved</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm bg-danger bg-opacity-10">
-            <div class="card-body text-center py-3">
-                <h6 class="text-uppercase fw-semibold text-danger mb-1">Rejected</h6>
-                <h3 class="fw-bold mb-0">{{ $products->where('status', 'rejected')->count() }}</h3>
-            </div>
+        <div class="stat-card danger">
+            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-value">{{ $products->where('status', 'rejected')->count() }}</div>
+            <div class="stat-label">Rejected</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="card border-0 shadow-sm bg-info bg-opacity-10">
-            <div class="card-body text-center py-3">
-                <h6 class="text-uppercase fw-semibold text-info mb-1">Resubmitted</h6>
-                <h3 class="fw-bold mb-0">{{ $products->where('status', 'resubmitted')->count() }}</h3>
-            </div>
+        <div class="stat-card info">
+            <div class="stat-icon"><i class="fas fa-redo"></i></div>
+            <div class="stat-value">{{ $products->where('status', 'resubmitted')->count() }}</div>
+            <div class="stat-label">Resubmitted</div>
         </div>
     </div>
 </div>
 
 {{-- Products Table --}}
-<div class="card shadow-sm border-0">
-    <div class="card-body">
+<div class="seller-card">
+    <div class="card-body-custom p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+            <table class="seller-table">
+                <thead>
                     <tr>
                         <th>Title</th>
-                        <th>Category</th>
+                        <th>Category</  th>
                         <th>Brand</th>
                         <th>Status</th>
                         <th>Created</th>
@@ -62,74 +65,53 @@
                 <tbody>
                     @forelse($products as $product)
                     <tr>
-                        {{-- Title --}}
                         <td>
                             <strong>{{ $product->title }}</strong>
                             @if($product->status == 'rejected' && $product->rejection_reason)
                                 <br>
-                                <span class="text-danger small">
+                                <span style="color:var(--nykaa-danger);font-size:12px;">
                                     <i class="fas fa-exclamation-circle"></i>
                                     <strong>Reason:</strong> {{ $product->rejection_reason }}
                                 </span>
                             @endif
                         </td>
-
-                        {{-- Category --}}
                         <td>{{ $product->category->name ?? 'N/A' }}</td>
-
-                        {{-- Brand --}}
                         <td>{{ $product->brand->name ?? 'N/A' }}</td>
-
-                        {{-- Status Badge --}}
                         <td>
                             @php
-                                $badgeColors = [
-                                    'pending' => 'bg-warning text-dark',
-                                    'approved' => 'bg-success',
-                                    'rejected' => 'bg-danger',
-                                    'resubmitted' => 'bg-info text-dark',
-                                ];
-                                $badgeColor = $badgeColors[$product->status] ?? 'bg-secondary';
+                                $badgeClass = match($product->status) {
+                                    'pending' => 'bg-pending',
+                                    'approved' => 'bg-approved',
+                                    'rejected' => 'bg-rejected',
+                                    'resubmitted' => 'bg-resubmitted',
+                                    default => 'bg-secondary'
+                                };
                             @endphp
-                            <span class="badge {{ $badgeColor }}">
+                            <span class="badge-nykaa {{ $badgeClass }}">
                                 {{ ucfirst($product->status) }}
                             </span>
                         </td>
-
-                        {{-- Created Date --}}
-                        <td>
-                            <small class="text-muted">{{ $product->created_at->format('d M Y') }}</small>
-                        </td>
-
-                        {{-- Actions --}}
+                        <td><small class="text-muted">{{ $product->created_at->format('d M Y') }}</small></td>
                         <td>
                             <div class="d-flex gap-2 flex-wrap">
-
-                                {{-- Variant Edit --}}
-                                <a href="{{ route('seller.variants.index', $product->id) }}"
-                                   class="btn btn-sm btn-outline-primary"
-                                   title="Manage Variants">
-                                    <i class="fas fa-layer-group me-1"></i>Manage Variants
+                                <a href="{{ route('seller.variants.index', $product->id) }}" class="btn-action view">
+                                    <i class="fas fa-layer-group"></i> Variants
                                 </a>
-
-                                {{-- Delete --}}
-                                <form action="{{ route('seller.products.destroy', $product->id) }}"
-                                      method="POST"
-                                      class="d-inline"
-                                      onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                        <i class="fas fa-trash me-1"></i>Delete
-                                    </button>
-                                </form>
-
+                                <a href="{{ route('seller.request-center.create', ['product_id' => $product->id, 'type' => 'product_edit']) }}" class="btn-action edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="{{ route('seller.request-center.create', ['product_id' => $product->id, 'type' => 'product_delete']) }}" class="btn-action delete">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-4">No products found. Start by adding one!</td>
+                        <td colspan="6" class="text-center py-5" style="color:var(--nykaa-text-light);">
+                            <i class="fas fa-box fa-2x mb-2 d-block"></i>
+                            No products found. Start by adding one!
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>

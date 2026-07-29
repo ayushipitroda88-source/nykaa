@@ -140,6 +140,32 @@
     background: #fff0f5;
 }
 
+/* Nav link hover indicator - subtle arrow */
+.nav-links > li > a::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 4px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #999;
+    vertical-align: middle;
+    transition: transform 0.3s ease;
+}
+
+.nav-links > li:hover > a::after {
+    transform: rotate(180deg);
+    border-top-color: #fc2779;
+}
+
+/* Make category link more prominent on hover */
+.nav-links > li:hover > a {
+    color: #fc2779;
+    background: #fff0f5;
+    box-shadow: 0 2px 8px rgba(252, 39, 121, 0.1);
+}
+
 /* ==========================
       MEGA MENU
 ========================== */
@@ -149,12 +175,12 @@
     top: 100%;
     left: 50%;
     transform: translateX(-50%) translateY(12px);
-    width: 900px;
-    max-width: 90vw;
-    background: #fff;
-    border-radius: 16px;
-    padding: 28px 32px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 8px 20px rgba(0, 0, 0, 0.06);
+    width: 1050px;
+    max-width: 95vw;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+    border-radius: 20px;
+    padding: 32px 40px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15), 0 10px 24px rgba(0, 0, 0, 0.08);
     border: 1px solid #f0f0f0;
     opacity: 0;
     visibility: hidden;
@@ -162,14 +188,31 @@
     z-index: 10000;
     pointer-events: none;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 28px;
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.mega-menu::-webkit-scrollbar {
+    width: 6px;
+}
+.mega-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+.mega-menu::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+}
+.mega-menu::-webkit-scrollbar-thumb:hover {
+    background: #fc2779;
 }
 
 .nav-links > li:hover .mega-menu {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(8px);
+    transform: translateX(-50%) translateY(10px);
     pointer-events: auto;
 }
 
@@ -186,6 +229,15 @@
 /* Mega menu column */
 .mega-col {
     min-width: 0;
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+
+.mega-col:hover {
+    background: #fff8fa;
+    box-shadow: 0 2px 12px rgba(252, 39, 121, 0.06);
 }
 
 .mega-col-title {
@@ -222,19 +274,21 @@
 
 .mega-col-list li a {
     display: block;
-    padding: 6px 0;
+    padding: 7px 10px;
     font-size: 13px;
     font-weight: 500;
-    color: #555;
+    color: #444;
     text-decoration: none;
     transition: all 0.2s ease;
-    border-radius: 4px;
+    border-radius: 8px;
+    line-height: 1.4;
 }
 
 .mega-col-list li a:hover {
     color: #fc2779;
-    padding-left: 6px;
-    background: transparent;
+    background: #fff0f5;
+    padding-left: 14px;
+    font-weight: 600;
 }
 
 /* Sub-category heading inside mega */
@@ -303,7 +357,7 @@
 
 .search-box input::placeholder {
     color: #bbb;
-}
+} 
 
 /* ==========================
     SELLER BUTTON
@@ -821,6 +875,16 @@
                     <li>
                         <a class="dropdown-item" href="{{ route('home') }}">
                             <i class="bi bi-person-circle"></i> My Account
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('user.orders.index') }}">
+                            <i class="bi bi-bag-check"></i> My Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('user.reviews.index') }}">
+                            <i class="bi bi-star"></i> My Reviews
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>

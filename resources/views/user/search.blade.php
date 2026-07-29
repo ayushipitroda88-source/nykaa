@@ -303,104 +303,62 @@
     }
 
     /* Wishlist Button */
-    .wishlist-btn {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        width: 40px;
-        height: 40px;
+    .wishlist-form { position: absolute; top: 10px; right: 10px; z-index: 10; }
+    .wishlist-icon {
+        width: 36px; height: 36px;
+        border: none; border-radius: 50%;
         background: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-        border: none;
         cursor: pointer;
-        transition: all 0.3s;
-        z-index: 2;
-        color: #cbd5e0;
-        font-size: 18px;
+        box-shadow: 0 3px 12px rgba(0,0,0,.13);
+        transition: all .3s;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 15px; color: #bbb;
     }
-
-    .wishlist-btn:hover {
-        transform: scale(1.1);
-        color: #fc2779;
-    }
-
-    .wishlist-btn.active {
-        color: #fc2779;
-    }
+    .wishlist-icon:hover { background: #fc2779; color: #fff !important; transform: scale(1.1); }
+    .wishlist-icon.wishlisted { color: #fc2779 !important; background: #fff0f5; }
 
     /* Quick Add to Cart */
-    .quick-cart-btn {
+    .quick-cart-form {
         position: absolute;
-        bottom: 14px;
-        right: 14px;
-        width: 44px;
-        height: 44px;
-        background: #fc2779;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
+        bottom: 12px; right: 12px; z-index: 10;
+        opacity: 0; transform: translateY(8px); transition: all .3s ease;
+    }
+    .product-card:hover .quick-cart-form { opacity: 1; transform: translateY(0); }
+    .quick-cart-btn {
+        width: 40px; height: 40px;
+        border: none; border-radius: 50%;
+        background: #fc2779; color: #fff; font-size: 18px;
+        display: flex; align-items: center; justify-content: center;
         cursor: pointer;
-        transition: all 0.3s;
-        z-index: 2;
-        color: #fff;
-        font-size: 20px;
-        box-shadow: 0 4px 15px rgba(252, 39, 121, 0.35);
-        opacity: 0;
-        transform: translateY(10px);
+        box-shadow: 0 4px 14px rgba(252,39,121,.4);
+        transition: background .2s;
     }
-
-    .product-card:hover .quick-cart-btn {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .quick-cart-btn:hover {
-        background: #1a1a1a;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-    }
+    .quick-cart-btn:hover { background: #d91d66; }
 
     /* Product Info */
     .product-card .product-info {
-        padding: 20px;
+        padding: 14px 16px 16px;
+        flex: 1; display: flex; flex-direction: column;
     }
-
-    .product-card .product-category {
-        font-size: 12px;
-        color: #fc2779;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 6px;
+    .product-brand {
+        font-size: 11px; font-weight: 700;
+        color: #fc2779; text-transform: uppercase;
+        letter-spacing: .8px; margin-bottom: 4px;
     }
-
-    .product-card .product-info h3 {
-        font-size: 17px;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin: 0 0 10px 0;
-        line-height: 26px;
+    .product-name-title {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        min-height: 52px;
+        min-height: 40px; margin-bottom: 8px;
     }
-
-    .product-card .product-info h3 a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.2s;
+    .product-name-title a {
+        text-decoration: none; color: #1a1a1a;
+        font-size: 14px; font-weight: 600; line-height: 1.45;
     }
-
-    .product-card .product-info h3 a:hover {
-        color: #fc2779;
-    }
+    .product-name-title a:hover { color: #fc2779; }
+    .rating-row { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+    .rating-stars-sm { color: #ffb300; font-size: 12px; }
 
     /* Rating */
     .rating-stars {
@@ -728,59 +686,101 @@
 
                 @forelse($products as $product)
 
+                @php
+                    $hasDiscount = $product->old_price && $product->old_price > $product->price;
+                    $discountPct = $hasDiscount ? round((($product->old_price - $product->price) / $product->old_price) * 100) : 0;
+                    $avgRating   = $product->reviews_avg_rating ? round($product->reviews_avg_rating, 1) : 0;
+                    $reviewCount = $product->reviews_count ?? 0;
+                @endphp
+
                 <div class="product-card" data-price="{{ $product->price }}" data-name="{{ $product->title }}">
+
+                    @if($hasDiscount)
+                        <span class="discount-badge">{{ $discountPct }}% OFF</span>
+                    @endif
+
+                    <!-- Wishlist -->
+                    <form action="{{ route('wishlist.add', $product->id) }}" method="POST" class="wishlist-form">
+                        @csrf
+                        <button type="submit"
+                            class="wishlist-icon {{ in_array($product->id, $wishlistProductIds ?? []) ? 'wishlisted' : '' }}"
+                            title="{{ in_array($product->id, $wishlistProductIds ?? []) ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
+                            <i class="{{ in_array($product->id, $wishlistProductIds ?? []) ? 'bi bi-heart-fill' : 'bi bi-heart' }}"></i>
+                        </button>
+                    </form>
+
+                    @if($product->quantity > 0)
+                    <form action="{{ route('cart.add', $product->id) }}" method="POST" class="quick-cart-form">
+                        @csrf
+                        <button type="submit" class="quick-cart-btn" title="Quick Add to Cart">
+                            <i class="bi bi-cart-plus"></i>
+                        </button>
+                    </form>
+                    @endif
+
                     <div class="product-image-wrapper">
                         <a href="{{ route('product.show', $product->id) }}">
                             @if($product->image)
                                 <img src="{{ asset('uploads/'.$product->image) }}" alt="{{ $product->title }}">
                             @else
-                                <img src="https://via.placeholder.com/300x400" alt="No Image">
+                                <img src="https://placehold.co/300x300?text=No+Image" alt="No Image">
                             @endif
                         </a>
-
-                        @if($product->old_price && $product->old_price > $product->price)
-                            @php $discount = round((($product->old_price - $product->price) / $product->old_price) * 100); @endphp
-                            <span class="discount-badge">-{{ $discount }}%</span>
-                        @endif
-
-                        <button class="wishlist-btn" onclick="toggleWishlist({{ $product->id }}, this)">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
-                        </button>
-
-                        <form action="{{ route('cart.add', $product->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            <button type="submit" class="quick-cart-btn" title="Add to Cart">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                            </button>
-                        </form>
                     </div>
 
                     <div class="product-info">
-                        <div class="product-category">{{ $product->category->name ?? 'General' }}</div>
-                        <h3>
-                            <a href="{{ route('product.show', $product->id) }}">
-                                {{ $product->title }}
-                            </a>
-                        </h3>
+                        @if($product->brand)
+                            <div class="product-brand">{{ $product->brand->name }}</div>
+                        @else
+                            <div class="product-brand">{{ $product->category->name ?? '' }}</div>
+                        @endif
 
-                        
-                        
+                        <div class="product-name-title">
+                            <a href="{{ route('product.show', $product->id) }}">{{ $product->title }}</a>
+                        </div>
+
+                        @if($reviewCount > 0)
+                        <div class="rating-row">
+                            <span class="rating-stars-sm">
+                                @for($s=1;$s<=5;$s++)
+                                    <i class="bi {{ $s <= round($avgRating) ? 'bi-star-fill' : ($s - 0.5 <= $avgRating ? 'bi-star-half' : 'bi-star') }}"></i>
+                                @endfor
+                            </span>
+                            <span class="rating-count">({{ $reviewCount }})</span>
+                        </div>
+                        @endif
+
                         <div class="price-box">
                             <span class="price-current">₹{{ number_format($product->price, 0) }}</span>
-                            @if($product->old_price && $product->old_price > $product->price)
+                            @if($hasDiscount)
                                 <span class="price-old">₹{{ number_format($product->old_price, 0) }}</span>
-                                @php $discount = round((($product->old_price - $product->price) / $product->old_price) * 100); @endphp
-                                <span class="price-discount-pct">{{ $discount }}% OFF</span>
+                                <span class="price-discount-pct">{{ $discountPct }}% OFF</span>
                             @endif
                         </div>
 
-                        <a href="{{ route('product.show', $product->id) }}" class="view-details-btn">
-                            View Details
-                        </a>
+                        <div style="margin-bottom:10px;">
+                            @if($product->quantity > 0)
+                                <span style="font-size:11px;font-weight:600;color:#27ae60;background:#eafaf1;padding:3px 10px;border-radius:20px;">In Stock</span>
+                            @else
+                                <span style="font-size:11px;font-weight:600;color:#e74c3c;background:#fdecea;padding:3px 10px;border-radius:20px;">Out of Stock</span>
+                            @endif
+                        </div>
+
+                        <div style="display:flex;gap:8px;">
+                            <a href="{{ route('product.show', $product->id) }}" class="view-details-btn" style="flex:1;">
+                                <i class="bi bi-eye" style="margin-right:4px;"></i> View
+                            </a>
+                            @if($product->quantity > 0)
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST" style="flex:1;">
+                                @csrf
+                                <button type="submit" style="width:100%;padding:12px;background:linear-gradient(135deg,#fc2779,#ff5ba8);color:#fff;border:none;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:all .25s;">
+                                    <i class="bi bi-bag-plus"></i> Add
+                                </button>
+                            </form>
+                            @else
+                            <button disabled style="flex:1;padding:12px;background:#f5f5f5;color:#aaa;border:none;border-radius:10px;font-weight:600;font-size:14px;cursor:not-allowed;">Sold Out</button>
+                            @endif
+                        </div>
                     </div>
                 </div>
 

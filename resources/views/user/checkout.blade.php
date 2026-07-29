@@ -290,7 +290,7 @@
 
 <div class="checkout-left">
 
-<form action="{{ route('checkout') }}" method="POST">
+<form action="{{ route('checkout.place') }}" method="POST">
 
 @csrf
 

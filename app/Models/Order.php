@@ -13,6 +13,11 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'shipping_address',
+        'confirmed_at',
+    ];
+
+    protected $casts = [
+        'confirmed_at' => 'datetime',
     ];
 
     public function user()
@@ -23,5 +28,10 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function isConfirmed(): bool
+    {
+        return strtolower($this->status) === 'confirmed';
     }
 }
